@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healingbee/main.dart';
 
+import 'home_page_content.dart';
 import 'loginpage.dart'; // Import your homepage file
 
 class RegisterScreen extends StatelessWidget {

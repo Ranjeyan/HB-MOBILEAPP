@@ -4,6 +4,8 @@ import 'package:healingbee/main.dart';
 import 'package:url_launcher/url_launcher.dart'; // Import url_launcher package;
 import 'package:healingbee/screens/Policy_Page.dart';
 
+import 'home_page_content.dart';
+
 class DetailsScreen extends StatefulWidget {
   @override
   _DetailsScreenState createState() => _DetailsScreenState();

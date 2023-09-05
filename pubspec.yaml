@@ -45,6 +45,11 @@ dev_dependencies:
     sdk: flutter
   flutter_locales: ^3.0.0+1
   url_launcher: ^6.0.13
+  mesh_gradient: ^1.1.3
+  gradients: ^0.1.1+2
+  flutter_svg: ^0.22.0
+
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -69,7 +74,6 @@ flutter:
   assets:
     - assets/images/upda.png
     - assets/images/logo.png
-    - assets/images/brain.jpg
     - assets/images/Brain.png
     - assets/images/apple.png
     - assets/images/fb.png
