@@ -37,17 +37,24 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  flutter_locales: ^3.0.0+1
+  circle_flags: ^3.0.1
+  url_launcher: ^6.0.13
+  gradients: ^0.1.1+2
+  firebase_auth: ^4.9.0
+  firebase_core: ^2.15.1
+  fluttertoast: ^8.2.2
+  pinput: ^3.0.1
+  modal_progress_hud_nsn: ^0.4.0
+  google_sign_in: ^6.1.5
 
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_locales: ^3.0.0+1
-  url_launcher: ^6.0.13
-  mesh_gradient: ^1.1.3
-  gradients: ^0.1.1+2
-  flutter_svg: ^0.22.0
+
+
 
 
 
@@ -76,6 +83,7 @@ flutter:
     - assets/images/logo.png
     - assets/images/Brain.png
     - assets/images/apple.png
+    - assets/images/mobile.png
     - assets/images/fb.png
     - assets/images/google.png
     - assets/locales/en.json
@@ -110,6 +118,19 @@ flutter:
        fonts:
          - asset: fonts/Ubuntu-M.ttf
   #         weight: 700
+
+
+     - family: lufga
+       fonts:
+         - asset: fonts/Fontspring-DEMO-lufga-medium.otf
+
+     - family: ReadexPro
+       fonts:
+         - asset: fonts/ReadexPro-Regular.ttf
+
+     - family: YukitaSans
+       fonts:
+         - asset: fonts/YukitaSans-Regular-BF640fc93d5bd03.otf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

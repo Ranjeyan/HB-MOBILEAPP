@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "778219018408",
-    "project_id": "healingbee-backend",
-    "storage_bucket": "healingbee-backend.appspot.com"
+    "project_number": "960189514323",
+    "project_id": "healingbee-firebase",
+    "storage_bucket": "healingbee-firebase.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:778219018408:android:7ad46630ed59350bfcca9d",
+        "mobilesdk_app_id": "1:960189514323:android:f9ea7e0b454ff0839d7ca6",
         "android_client_info": {
           "package_name": "com.example.healingbee"
         }
       },
       "oauth_client": [
         {
-          "client_id": "778219018408-lsqgtei3ir5tsth20uviaofrfkfkmt0s.apps.googleusercontent.com",
+          "client_id": "960189514323-it9hm5h0pv7rlp0eu5fbo14735ilfs24.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.healingbee",
+            "certificate_hash": "a87ab9ba562560ea9c4aee3a3492b2a9abfe981e"
+          }
+        },
+        {
+          "client_id": "960189514323-odc7j69k0426oskrutkqucsb552bqkd4.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAi_smpJ2E9n57pX9IujeJyQXWdy-SAddM"
+          "current_key": "AIzaSyCKP1hGxbHVILn6RegnBZnOMVv0aL24X8o"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "778219018408-lsqgtei3ir5tsth20uviaofrfkfkmt0s.apps.googleusercontent.com",
+              "client_id": "960189514323-odc7j69k0426oskrutkqucsb552bqkd4.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

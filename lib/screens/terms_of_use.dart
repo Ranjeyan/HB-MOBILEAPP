@@ -1,238 +1,416 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:healingbee/main.dart';
-import 'package:url_launcher/url_launcher.dart'; // Import url_launcher package;
-import 'package:healingbee/screens/Policy_Page.dart';
+import 'package:flutter/services.dart';
 
-import 'home_page_content.dart';
-
-class DetailsScreen extends StatefulWidget {
-  @override
-  _DetailsScreenState createState() => _DetailsScreenState();
-}
-
-class _DetailsScreenState extends State<DetailsScreen> {
-  final ScrollController _scrollController = ScrollController();
-  bool _showButton = false;
-  bool _showScrollMessage = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_scrollListener);
-  }
-
-  void _scrollListener() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.minScrollExtent) {
-      setState(() {
-        _showScrollMessage = true;
-      });
-    } else {
-      setState(() {
-        _showScrollMessage = false;
-      });
-    }
-
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
-      setState(() {
-        _showButton = true;
-      });
-    } else {
-      setState(() {
-        _showButton = false;
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
+class DetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Set the status bar color to white
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+      statusBarColor: Colors.white,
+    ));
+
     return Scaffold(
-      backgroundColor: Color(0xFFD5F3E3),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 48),
-            Center(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            backgroundColor: Colors.white,
+            elevation: 0.0,
+            expandedHeight: 80.0, // Reduced AppBar size
+            pinned: true,
+            title: Text(
+              "Privacy Policy",
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "Gotham",
+              ),
+            ),
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "PRIVACY POLICY",
-                    style: TextStyle(
-                      fontFamily: 'Neue Plak',
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF2C6144),
+                  Transform.translate(
+                    offset: Offset(0, -40), // Adjust this value to move up
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.menu,
+                            color: Colors.grey,
+                          ),
+                          onPressed: () {
+                            // Handle menu icon press
+                          },
+                          iconSize: 35,
+                        ),
+                        SizedBox(width: 135),
+                        Image.asset(
+                          'assets/images/logo.png',
+                          width: 100,
+                          height: 100,
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    "Effective Date: 28th June 2023",
-                    style: TextStyle(
-                      fontFamily: 'Neue Plak',
-                      fontSize: 14,
-                      color: Colors.black,
+                  SizedBox(height: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Transform.translate(
+                        offset: Offset(0, -40), // Adjust this value to move up
+                        child: Text(
+                          "Privacy",
+                          style: TextStyle(
+                            fontSize: 40,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 4), // Vertical spacing
+                      Transform.translate(
+                        offset: Offset(0, -30), // Adjust this value to move up
+                        child: Text(
+                          "Policy",
+                          style: TextStyle(
+                            fontSize: 40,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Transform.translate(
+                    offset: Offset(0, -20), // Adjust this value to move up
+                    child: Text(
+                      "Effective Date: 28th June 2023",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: "Gotham",
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "At Black Dot Innovations Pvt Ltd ('Company'),\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                        WidgetSpan(
+                          child: SizedBox(height: 10), // Adjust the height as needed
+                        ),
+                        TextSpan(
+                          text: "we are committed to protecting the privacy of our users.\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                        WidgetSpan(
+                          child: SizedBox(height: 10), // Adjust the height as needed
+                        ),
+                        TextSpan(
+                          text: "This Privacy Policy outlines how we collect, use, and disclose personal information when you participate in our survey using the Aidaform form creator platform.\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                        WidgetSpan(
+                          child: SizedBox(height: 10), // Adjust the height as needed
+                        ),
+                        TextSpan(
+                          text: "Please read this Privacy Policy carefully to understand our practices regarding your personal information.\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20), // Add space between sections
+
+                  // Next section
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Information We Collect :\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                        WidgetSpan(
+                          child: SizedBox(height: 10), // Adjust the height as needed
+                        ),
+                        TextSpan(
+                          text: "When you participate in our survey, we may collect the following types of information:\n\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20), // Add space between sections
+
+                  // Next section
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Use of Information :\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                        WidgetSpan(
+                          child: SizedBox(height: 10), // Adjust the height as needed
+                        ),
+                        TextSpan(
+                          text: "We use the collected information for the following purposes:\n\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20), // Add space between sections
+
+                  // Next section
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Third-Party Service Provider :\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                        WidgetSpan(
+                          child: SizedBox(height: 10), // Adjust the height as needed
+                        ),
+                        TextSpan(
+                          text: "We use the Aidaform form creator platform as a third-party service provider to collect the survey responses and audio recordings. As such, your personal information may be subject to Aidaform's privacy policy. We encourage you to review Aidaform's privacy policy at https://aidaform.com/privacy-policy.html to understand how they handle your personal information.\n\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20), // Add space between sections
+
+                  // Next section
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Data Retention and Security :\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                        WidgetSpan(
+                          child: SizedBox(height: 10), // Adjust the height as needed
+                        ),
+                        TextSpan(
+                          text: "We retain the collected information for as long as necessary to fulfill the purposes outlined in this Privacy Policy unless a longer retention period is required or permitted by law. We take reasonable measures to protect your personal information from unauthorized access, use, or disclosure.\n\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20), // Add space between sections
+
+                  // Next section
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Disclosure of Information :\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                        WidgetSpan(
+                          child: SizedBox(height: 10), // Adjust the height as needed
+                        ),
+                        TextSpan(
+                          text: "We do not disclose your personal information to third parties unless required by law or with your consent. However, please note that Aidaform may collect, process, and store your personal information in accordance with their privacy policy.\n\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20), // Add space between sections
+
+                  // Next section
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Your Rights :\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                        WidgetSpan(
+                          child: SizedBox(height: 10), // Adjust the height as needed
+                        ),
+                        TextSpan(
+                          text: "You have certain rights regarding your personal information, including the right to access, correct, or delete your personal information. If you wish to exercise these rights or have any questions about our privacy practices, please contact us at hello@blackdotinnovation.com\n\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20), // Add space between sections
+
+                  // Next section
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Changes to the Privacy Policy :\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                        WidgetSpan(
+                          child: SizedBox(height: 10), // Adjust the height as needed
+                        ),
+                        TextSpan(
+                          text: "We reserve the right to modify or update this Privacy Policy at any time. We will provide notice of any material changes by posting the revised Privacy Policy on our website or through other means.\n\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20), // Add space between sections
+
+                  // Next section
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Contact Us :\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                        WidgetSpan(
+                          child: SizedBox(height: 10), // Adjust the height as needed
+                        ),
+                        TextSpan(
+                          text: "If you have any questions, concerns, or requests regarding this Privacy Policy or our privacy practices, please contact us at hello@blackdotinnovation.com\n\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20), // Add space between sections
+
+                  // Last section
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "By participating in our survey, you acknowledge that you have read and understood this Privacy Policy and agree to the collection, use, and disclosure of your personal information as described herein.\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Gotham",
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 24),
-            Expanded(
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Visibility(
-                        visible: _showScrollMessage,
-                        child: Container(
-                          margin: EdgeInsets.only(top:15 ),
-                          padding: EdgeInsets.all(8),
-                          color: Color(0xFF37AC6C),
-                          child: Text(
-                            "Scroll up to read and accept the Privacy Policy",
-                            style: TextStyle(
-                              fontFamily: 'Neue Plak',
-                              fontSize: 14,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      "At Black Dot Innovations Pvt Ltd (\"Company\"), we are committed to protecting the privacy of our users...",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                    ),
-                    Text(
-                      "Information We Collect : When you participate in our survey, we may collect the following types of information:\n\n"
-                          "1.1 Personal Information: We may collect personal information that you provide voluntarily, such as your name, email address, and any other information you choose to provide in the survey.\n\n"
-                          "1.2 Survey Responses: We collect the responses you provide to the GAD-7 and PHQ-9 questions as well as any additional questions in the survey.\n\n"
-                          "1.3 Audio Recordings: With your consent, we may collect audio recordings associated with your survey responses.\n\n"
-                          "Use of Information : We use the collected information for the following purposes:\n\n"
-                          "2.1 Research and Development: The information collected is used for research and development purposes to improve our machine learning engine's ability to predict GAD-7 and PHQ-9 scores from voice samples.\n\n"
-                          "2.2 Data Analysis: We analyze the collected data to gain insights into mental health assessment and support, helping us contribute to advancements in the field.\n\n"
-                          "Third-Party Service Provider : We use the Aidaform form creator platform as a third-party service provider to collect the survey responses and audio recordings. As such, your personal information may be subject to Aidaform's privacy policy. We encourage you to review Aidaform's privacy policy at ",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        launch("https://aidaform.com/privacy-policy.html");
-                      },
-                      child: Text(
-                        "https://aidaform.com/privacy-policy.html",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.blue,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      " to understand how they handle your personal information.\n\n"
-                          "Data Retention and Security :  We retain the collected information for as long as necessary to fulfill the purposes outlined...",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        launch("mailto:hello@blackdotinnovation.com");
-                      },
-                      child: Text(
-                        "hello@blackdotinnovation.com",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.blue,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      "\n\nChanges to the Privacy Policy :  We reserve the right to modify or update this Privacy Policy at any time...",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        launch("mailto:hello@blackdotinnovation.com");
-                      },
-                      child: Text(
-                        "hello@blackdotinnovation.com",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.blue,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      "\n\nBy participating in our survey, you acknowledge that you have read and understood this Privacy Policy...",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                    ),
-
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 24),
-            Visibility(
-              visible: _showButton,
-              child: Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomePage(initialLanguage: '',)),
-                    );
-                    // Handle button press
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Color(0xFF2C6144),
-                  ),
-                  child: Text(
-                    "Accept & Continue",
-                    style: TextStyle(
-                      fontFamily: 'Neue Plak',
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
-
-
-void main() => runApp(MaterialApp(home: DetailsScreen()));
+void main() {
+  runApp(MaterialApp(
+    home: DetailsScreen(),
+    theme: ThemeData(
+      appBarTheme: AppBarTheme(
+        elevation: 0, // Remove AppBar shadow
+      ),
+    ),
+  ));
+}

@@ -1,22 +1,25 @@
-import 'dart:ui';
-
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
-import 'package:healingbee/screens/faq.dart';
-import 'package:healingbee/screens/home_page_content.dart';
-import 'package:healingbee/screens/loginpage.dart';
-import 'package:healingbee/screens/signuppage.dart';
-import 'package:healingbee/screens/terms_of_use.dart';
+import 'package:healingbee/screens/Page-one.dart';
+import 'package:healingbee/screens/home_page.dart';
+import 'package:healingbee/screens/Mobile_number.dart';
+import 'package:healingbee/screens/next.dart';
+import 'package:healingbee/screens/otp_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
+  // Ensure that Firebase is initialized before running the app
   WidgetsFlutterBinding.ensureInitialized();
-  await Locales.init(['en', 'gu', 'hi', 'kn', 'ml', 'mr', 'pa', 'ta', 'te', 'ur']);
+  await Firebase.initializeApp();
+
+  // The rest of your app initialization code
+  await Locales.init(
+      ['en', 'gu', 'hi', 'kn', 'ml', 'mr', 'pa', 'ta', 'te', 'ur']);
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +29,21 @@ class MyApp extends StatelessWidget {
         localizationsDelegates: Locales.delegates,
         supportedLocales: Locales.supportedLocales,
         locale: locale,
-        home: const SplashScreen(),
+        // Set the initialRoute to 'splash'
+        initialRoute: 'splash',
+        // Define your named routes
+        routes: {
+          'splash': (context) => SplashScreen(), // New splash route
+          'phone': (context) => MobileNumberPage(),
+          'verify': (context) => MyVerify(),
+          'next': (context) => AppEntryPage(),
+        },
         onGenerateRoute: (settings) {
           if (settings.name == '/home') {
             final args = settings.arguments as Map<String, dynamic>?;
             if (args != null && args.containsKey('languageName')) {
               return MaterialPageRoute(
-                builder: (context) => HomePage(initialLanguage: args['languageName']),
+                builder: (context) => HomePage(),
               );
             }
           }
@@ -43,20 +54,17 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
-
-
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({Key? key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _logoAnimation;
-  late Animation<double> _buttonsAnimation;
 
   @override
   void initState() {
@@ -76,17 +84,19 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       ),
     );
 
-    _buttonsAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.5, 1.0),
-      ),
-    );
-
     _controller.forward();
+
+    // Navigate to the next page after the animation completes
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(), // Change to the desired page
+          ),
+        );
+      }
+    });
   }
 
   @override
@@ -96,13 +106,13 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
         children: [
           AnimatedContainer(
             duration: const Duration(seconds: 5),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topCenter, // Start at the top center
-                end: Alignment.bottomCenter, // End at the bottom center
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
                 colors: [
                   Colors.white,
-                  Color(0xFFC8FCE3), // ABF5D2
+                  Colors.white38,
                 ],
               ),
             ),
@@ -128,146 +138,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                                 height: 150.0,
                               ),
                             ),
-                            AnimatedBuilder(
-                              animation: _controller,
-                              builder: (context, child) {
-                                return Opacity(
-                                  opacity: _buttonsAnimation.value,
-                                  child: child!,
-                                );
-                              },
-                              child: Column(
-                                children: [
-                                  const SizedBox(height: 20),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width * 0.9,
-                                    height: 70.0,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 10.0,
-                                    ),
-                                    child: MaterialButton(
-                                      color: Color(0xFF37AC6C),
-                                      shape: RoundedRectangleBorder(
-                                        side: const BorderSide(
-                                          color: Color(0xFF37AC6C),
-                                        ),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => const LoginScreen(),
-                                          ),
-                                        );
-                                      },
-                                      child: const Text(
-                                        "Login",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width * 0.9,
-                                    height: 70.0,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 10.0,
-                                    ),
-                                    child: MaterialButton(
-                                      shape: RoundedRectangleBorder(
-                                        side: const BorderSide(
-                                          color: Color(0xFF37AC6C),
-                                        ),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => const RegisterScreen(),
-                                          ),
-                                        );
-                                      },
-                                      child: const Text(
-                                        "Register",
-                                        style: TextStyle(
-                                          color: Color(0xFF37AC6C),
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Position the text near the bottom
-                Positioned(
-                  bottom: 30.0,
-                  left: 0,
-                  right: 0,
-                  child: Column(
-                    children: [
-                      RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 15.0,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: "By creating an account, you accept the\n",
-                            ),
-                            TextSpan(
-                              text: "Terms & Conditions",
-                              style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14.0,
-                                color: Color(0XFF287B53), // Change color to blue for underlined text
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  // Handle navigation to the terms & conditions page
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>  DetailsScreen(),
-                                    ),
-                                  );
-                                },
-                            ),
-                            TextSpan(
-                              text: " and ",
-                            ),
-                            TextSpan(
-                              text: "FAQ's",
-                              style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14.0,
-                                color: Color(0XFF287B53), // Change color to blue for underlined text
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  // Handle navigation to the FAQ's page
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => FAQPage(),
-                                    ),
-                                  );
-                                },
-                            ),
                           ],
                         ),
                       ),
@@ -288,4 +158,3 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     super.dispose();
   }
 }
-

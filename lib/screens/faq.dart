@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'Policy_Page.dart';
+
 
 class FAQPage extends StatelessWidget {
   @override
@@ -92,9 +92,7 @@ class FAQContent extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => PolicyPage(), // Replace with your policy page
-                  ));
+
                 },
                   style: ElevatedButton.styleFrom(
                     primary: Color(0xFF37AC6C), // Change the color here
