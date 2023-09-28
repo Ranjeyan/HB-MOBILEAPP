@@ -3,10 +3,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:healingbee/screens/terms_of_use.dart';
+import 'package:healingbee/screens/privacy_policy.dart';
 
+import 'Mobile_number.dart';
 import 'faq.dart';
-import 'next.dart';
+import 'user_name_page.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -79,8 +80,8 @@ class HomePage extends StatelessWidget {
                     signInWithGoogle(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.white,
-                    onPrimary: Colors.black,
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                       side: BorderSide(color: Colors.black),
@@ -114,11 +115,16 @@ class HomePage extends StatelessWidget {
                 SizedBox(height: screenSize.height * 0.02),
                 ElevatedButton(
                   onPressed: () {
-                    // Your onPressed logic here
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MobileNumberPage(),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.white,
-                    onPrimary: Colors.black,
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                       side: BorderSide(color: Colors.black),
@@ -171,7 +177,7 @@ class HomePage extends StatelessWidget {
                     TextSpan(
                       text: "Privacy Policy",
                       style: TextStyle(
-                        color: Color(0XFF052315),
+                        color: Color(0XFF024022),
                         decoration: TextDecoration.underline,
                         fontSize: 12.0,
                       ),
@@ -192,7 +198,7 @@ class HomePage extends StatelessWidget {
                     TextSpan(
                       text: "FAQ's",
                       style: TextStyle(
-                        color: Color(0XFF052315),
+                        color: Color(0XFF024022),
                         fontSize: 12.0,
                         decoration: TextDecoration.underline,
                       ),
@@ -225,8 +231,8 @@ Future<void> signInWithGoogle(BuildContext context) async {
       GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
 
       AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
 
       UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);

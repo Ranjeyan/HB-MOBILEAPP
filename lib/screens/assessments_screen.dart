@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
-class AppEntryPage extends StatelessWidget {
-  const AppEntryPage({super.key});
+class AssessmentsScreen extends StatelessWidget {
+  const AssessmentsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,25 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
-import 'package:healingbee/screens/Page-one.dart';
-import 'package:healingbee/screens/home_page.dart';
+import 'package:healingbee/screens/App_home_page.dart';
+import 'package:healingbee/screens/sign_in_page.dart';
 import 'package:healingbee/screens/Mobile_number.dart';
-import 'package:healingbee/screens/next.dart';
 import 'package:healingbee/screens/otp_page.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
-  // Ensure that Firebase is initialized before running the app
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  // The rest of your app initialization code
+  // Check if the user is already signed in
+  FirebaseAuth auth = FirebaseAuth.instance;
+  User? user = auth.currentUser;
+
   await Locales.init(
       ['en', 'gu', 'hi', 'kn', 'ml', 'mr', 'pa', 'ta', 'te', 'ur']);
-  runApp(const MyApp());
+  runApp(MyApp(user: user));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key});
+  final User? user;
+
+  const MyApp({Key? key, this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,21 +33,28 @@ class MyApp extends StatelessWidget {
         localizationsDelegates: Locales.delegates,
         supportedLocales: Locales.supportedLocales,
         locale: locale,
-        // Set the initialRoute to 'splash'
-        initialRoute: 'splash',
+        // Set the initialRoute based on the user's sign-in status
+        initialRoute: user == null ? 'splash' : 'appEntry',
         // Define your named routes
         routes: {
-          'splash': (context) => SplashScreen(), // New splash route
+          'splash': (context) => SplashScreen(),
           'phone': (context) => MobileNumberPage(),
           'verify': (context) => MyVerify(),
-          'next': (context) => AppEntryPage(),
+          'next': (context) {
+            final args = ModalRoute.of(context)!.settings.arguments as String;
+            return AppEntryPage(userName: args);
+          },
+          'appEntry': (context) => user == null
+              ? HomePage()
+              : AppEntryPage(userName: user?.displayName ?? ''),
         },
         onGenerateRoute: (settings) {
           if (settings.name == '/home') {
             final args = settings.arguments as Map<String, dynamic>?;
-            if (args != null && args.containsKey('languageName')) {
+            if (args != null && args.containsKey('userName')) {
+              final userName = args['userName'] as String;
               return MaterialPageRoute(
-                builder: (context) => HomePage(),
+                builder: (context) => AppEntryPage(userName: userName),
               );
             }
           }
@@ -92,7 +103,7 @@ class _SplashScreenState extends State<SplashScreen>
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(), // Change to the desired page
+            builder: (context) => MyApp(user: null), // Change to the desired page
           ),
         );
       }
@@ -120,7 +131,9 @@ class _SplashScreenState extends State<SplashScreen>
               children: [
                 Center(
                   child: Column(
-                    children: [
+
+
+                  children: [
                       Expanded(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,

@@ -43,7 +43,7 @@ class _MobileNumberPage extends State<MobileNumberPage> {
                 ),
                 Text(
                   "Please enter your mobile number",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w200, fontFamily: "lufga"),
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w200, fontFamily: "lufga",color: Color(0XFF024022),),
                 ),
                 SizedBox(
                   height: 20,
@@ -70,7 +70,7 @@ class _MobileNumberPage extends State<MobileNumberPage> {
                 Container(
                   height: 65,
                   decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: Colors.grey),
+                    border: Border.all(width: 1, color: Color(0XFF024022),),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -91,7 +91,7 @@ class _MobileNumberPage extends State<MobileNumberPage> {
                       ),
                       Text(
                         "|",
-                        style: TextStyle(fontSize: 45, color: Colors.grey),
+                        style: TextStyle(fontSize: 45, color: Color(0XFF024022),),
                       ),
                       SizedBox(
                         width: 10,
@@ -105,7 +105,7 @@ class _MobileNumberPage extends State<MobileNumberPage> {
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: "Phone",
-                            hintStyle: TextStyle(fontFamily: "lufga"),
+                            hintStyle: TextStyle(fontFamily: "lufga",color: Color(0XFF024022),),
                           ),
                         ),
                       ),
@@ -160,7 +160,7 @@ class _MobileNumberPage extends State<MobileNumberPage> {
               elevation: 0.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
-                side: BorderSide(color: Colors.black, width: 1.0),
+                side: BorderSide(color: Color(0XFF024022), width: 1.0),
               ),
             ),
             child: SizedBox(
@@ -169,7 +169,7 @@ class _MobileNumberPage extends State<MobileNumberPage> {
               child: Center(
                 child: Text(
                   "Send the code",
-                  style: TextStyle(fontFamily: "lufga", fontSize: 18),
+                  style: TextStyle(fontFamily: "lufga", fontSize: 18,color: Color(0XFF024022),),
                 ),
               ),
             ),

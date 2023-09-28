@@ -1,7 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:healingbee/screens/Mobile_number.dart';
 import 'package:pinput/pinput.dart';
+
+import 'Mobile_number.dart';
+import 'user_name_page.dart';
+
 
 class MyVerify extends StatefulWidget {
   const MyVerify({Key? key}) : super(key: key);
@@ -13,6 +16,9 @@ class MyVerify extends StatefulWidget {
 class _MyVerifyState extends State<MyVerify> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   var code = "";
+  bool showError = false;
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -67,15 +73,17 @@ class _MyVerifyState extends State<MyVerify> {
               ),
               Text(
                 "Phone Verification",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w200,color:Color(0XFF024022),fontFamily: "lufga"),
               ),
               SizedBox(
-                height: 10,
+                height: 15,
               ),
               Text(
                 "We need to register your phone without getting started!",
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
+                    fontFamily: "YukitaSans",
+                  color: Colors.grey,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -86,6 +94,9 @@ class _MyVerifyState extends State<MyVerify> {
                 length: 6,
                 onChanged: (value) {
                   code = value;
+                  setState(() {
+                    showError = false; // Reset error indicator when OTP changes
+                  });
                 },
                 showCursor: true,
                 onCompleted: (pin) => print(pin),
@@ -95,41 +106,62 @@ class _MyVerifyState extends State<MyVerify> {
               ),
               SizedBox(
                 width: double.infinity,
-                height: 45,
+                height: 55,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.green.shade600,
+                    primary: Colors.white,
+                    elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(15),
+                      side: BorderSide(color:  Color(0XFF024022), width: 1.0),
                     ),
                   ),
                   onPressed: () async {
                     try {
                       PhoneAuthCredential credential = PhoneAuthProvider.credential(
-                        verificationId: MobileNumberPage.verify,
+                        verificationId: MobileNumberPage.verify, // Replace with your verification ID
                         smsCode: code,
                       );
 
                       // Sign the user in (or link) with the credential
                       await auth.signInWithCredential(credential);
-                    } catch (e) {}
+
+                      // Navigate to the next page (NextPage widget)
+                      Navigator.pushNamed(
+                        context,
+                        '/next',
+                        arguments: {'userName': 'ran'},// Pass the userName as a route argument
+                      );
+
+                    } catch (e) {
+                      // Handle any errors that occur during verification
+                      print(e);
+                      setState(() {
+                        showError = true; // Set error indicator when OTP is incorrect
+                      });
+                      _showErrorSnackbar(context); // Display Snackbar
+                    }
                   },
-                  child: Text("Verify Phone Number"),
+                  child: Text("Verify Phone Number",style:  TextStyle(color:Color(0XFF024022),fontFamily: "lufga" ),),
                 ),
               ),
+              SizedBox(height: 20,),
               Row(
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        'phone',
-                            (route) => false,
-                      );
-                    },
-                    child: Text(
-                      "Edit Phone Number?",
-                      style: TextStyle(color: Colors.black),
+                  Padding(
+                    padding: EdgeInsets.only(top: 10.0, left: 122.0), // Add padding to move it down and to the right
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          'phone',
+                              (route) => false,
+                        );
+                      },
+                      child: Text(
+                        "Edit Phone Number?",
+                        style: TextStyle(color: Colors.grey,fontFamily: "YukitaSans",fontSize: 12),
+                      ),
                     ),
                   ),
                 ],
@@ -140,4 +172,26 @@ class _MyVerifyState extends State<MyVerify> {
       ),
     );
   }
+
+  // Function to show the error Snackbar
+  void _showErrorSnackbar(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Incorrect OTP. Please try again.",style: TextStyle(fontFamily: "lufga"),),
+        backgroundColor:Color(0XFF024022),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+}
+
+void main() {
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    initialRoute: '/verify',
+    routes: {
+      '/verify': (context) => MyVerify(),
+      '/next': (context) => NextPage(userName: '',),
+    },
+  ));
 }
