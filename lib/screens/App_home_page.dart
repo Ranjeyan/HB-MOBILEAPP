@@ -7,7 +7,7 @@ import 'package:healingbee/screens/quick_note_screen.dart';
 class AppEntryPage extends StatefulWidget {
   final String userName;
 
-  AppEntryPage({required this.userName});
+  AppEntryPage({required this.userName, required user});
 
   @override
   _AppEntryPageState createState() => _AppEntryPageState();

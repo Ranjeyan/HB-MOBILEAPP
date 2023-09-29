@@ -42,11 +42,11 @@ class MyApp extends StatelessWidget {
           'verify': (context) => MyVerify(),
           'next': (context) {
             final args = ModalRoute.of(context)!.settings.arguments as String;
-            return AppEntryPage(userName: args);
+            return AppEntryPage(userName: args, user: null,);
           },
           'appEntry': (context) => user == null
               ? HomePage()
-              : AppEntryPage(userName: user?.displayName ?? ''),
+              : AppEntryPage(userName: user?.displayName ?? '', user: null,),
         },
         onGenerateRoute: (settings) {
           if (settings.name == '/home') {
@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
             if (args != null && args.containsKey('userName')) {
               final userName = args['userName'] as String;
               return MaterialPageRoute(
-                builder: (context) => AppEntryPage(userName: userName),
+                builder: (context) => AppEntryPage(userName: userName, user: null,),
               );
             }
           }
@@ -97,13 +97,12 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navigate to the next page after the animation completes
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => MyApp(user: null), // Change to the desired page
+            builder: (context) => AppEntryPage(user: null, userName: '',), // Change to the desired page
           ),
         );
       }

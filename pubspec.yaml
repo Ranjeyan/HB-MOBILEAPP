@@ -82,6 +82,9 @@ flutter:
   assets:
     - assets/images/upda.png
     - assets/images/logo.png
+    - assets/images/profile_pic.png
+    - assets/images/img.png
+    - assets/images/arrow.png
     - assets/images/man-covering-face-with-hands.jpg
     - assets/images/apple.png
     - assets/images/mobile.png
@@ -132,6 +135,10 @@ flutter:
      - family: YukitaSans
        fonts:
          - asset: fonts/YukitaSans-Regular-BF640fc93d5bd03.otf
+
+     - family: Fantasista
+       fonts:
+         - asset: fonts/Fantasista-JRjvK.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

@@ -82,7 +82,7 @@ class _NextPageState extends State<NextPage> {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  AppEntryPage(userName: args,), // Replace with your next page
+                                  AppEntryPage(userName: args, user: null,), // Replace with your next page
                             ),
                           );
                         }
@@ -106,7 +106,7 @@ class _NextPageState extends State<NextPage> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                AppEntryPage(userName: 'Ran',), // Replace with your next page
+                                AppEntryPage(userName: 'Ran', user: null,), // Replace with your next page
                           ),
                         );
                       }
