@@ -191,7 +191,7 @@ void main() {
     initialRoute: '/verify',
     routes: {
       '/verify': (context) => MyVerify(),
-      '/next': (context) => NextPage(userName: '',),
+      '/next': (context) => NextPage(userName: '', email: '',),
     },
   ));
 }
