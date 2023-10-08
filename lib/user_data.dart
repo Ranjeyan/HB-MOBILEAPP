@@ -15,7 +15,7 @@ class UserData {
 }
 
 class UserDataProvider extends ChangeNotifier {
-  UserData _userData = UserData(name: '', gender: '', dateOfBirth: null);
+  final UserData _userData = UserData(name: '', gender: '', dateOfBirth: null);
 
   UserData get userData => _userData;
 

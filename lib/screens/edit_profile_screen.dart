@@ -1,17 +1,25 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class EditProfileScreen extends StatefulWidget {
   final String userName;
   final String userDob;
   final String userProfileImage;
   final String userEmail;
+  final String userGender;
+  final Function(String, String, String, String) onSave;
 
   EditProfileScreen({
     required this.userName,
     required this.userDob,
     required this.userProfileImage,
     required this.userEmail,
+    required this.userGender,
+    required this.onSave,
   });
 
   @override
@@ -21,15 +29,21 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
+  TextEditingController _genderController = TextEditingController();
+  TextEditingController _dobController = TextEditingController();
   DateTime? _selectedDate;
   String _selectedGender = '';
   FocusNode _nameFocusNode = FocusNode();
-  bool _showCursor = true;
 
   @override
   void initState() {
     super.initState();
     _nameController.text = widget.userName;
+    _genderController.text = widget.userGender;
+    if (widget.userDob.isNotEmpty) {
+      _selectedDate = DateTime.parse(widget.userDob);
+      _dobController.text = "${_selectedDate!.toLocal()}".split(' ')[0];
+    }
   }
 
   @override
@@ -38,11 +52,47 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.dispose();
   }
 
+  Future<void> _uploadProfileImage(File imageFile) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return;
+      }
+
+      final firebase_storage.Reference storageRef =
+      firebase_storage.FirebaseStorage.instance
+          .ref()
+          .child('profile_images/${user.uid}.jpg');
+
+      final uploadTask = storageRef.putFile(imageFile);
+
+      await uploadTask.whenComplete(() async {
+        final imageUrl = await storageRef.getDownloadURL();
+        if (imageUrl != null) {
+          // Update user's profile image in Firestore
+          await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+            'profileImage': imageUrl,
+          });
+
+          // Call the onSave callback to update the UI
+          widget.onSave(
+            _nameController.text,
+            _selectedGender,
+            _selectedDate != null ? "${_selectedDate!.toLocal()}".split(' ')[0] : '',
+            imageUrl, // Update the user's profile image URL
+          );
+        }
+      });
+    } catch (e) {
+      print('Error uploading profile image: $e');
+    }
+  }
+
   void _getImage(ImageSource source) async {
     final pickedFile = await ImagePicker().pickImage(source: source);
 
     if (pickedFile != null) {
-      setState(() {});
+      await _uploadProfileImage(File(pickedFile.path));
     }
   }
 
@@ -57,40 +107,50 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
+        _dobController.text = "${_selectedDate!.toLocal()}".split(' ')[0];
       });
     }
   }
 
   void _showGenderSelectionSheet(BuildContext context) {
     showModalBottomSheet(
+      backgroundColor: Color(0XFF00463C),
       context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20.0),
+        ),
+      ),
       builder: (BuildContext context) {
         return SafeArea(
           child: Wrap(
             children: [
               ListTile(
-                title: Text('Male'),
+                title: Text('Male',style: TextStyle(fontFamily: 'Helvetica',color:Color(0XFFD4AF37) ),),
                 onTap: () {
                   setState(() {
                     _selectedGender = 'Male';
+                    _genderController.text = 'Male';
                   });
                   Navigator.of(context).pop();
                 },
               ),
               ListTile(
-                title: Text('Female'),
+                title: Text('Female',style: TextStyle(fontFamily: 'Helvetica',color: Color(0XFFD4AF37)),),
                 onTap: () {
                   setState(() {
                     _selectedGender = 'Female';
+                    _genderController.text = 'Female';
                   });
                   Navigator.of(context).pop();
                 },
               ),
               ListTile(
-                title: Text('Other'),
+                title: Text('Other',style: TextStyle(fontFamily: 'Helvetica',color: Color(0XFFD4AF37)),),
                 onTap: () {
                   setState(() {
                     _selectedGender = 'Other';
+                    _genderController.text = 'Other';
                   });
                   Navigator.of(context).pop();
                 },
@@ -105,10 +165,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0XFF00463C),
       appBar: AppBar(
-        backgroundColor: Color(0XFF024022),
+        backgroundColor: Color(0XFF00463C),
         elevation: 0,
-        title: Text('Edit Profile'),
+        title: Text('Edit Profile', style: TextStyle(fontFamily: 'Helvetica')),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -127,7 +188,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           children: [
                             ListTile(
                               leading: Icon(Icons.camera),
-                              title: Text('Camera'),
+                              title: Text('Camera',style: TextStyle(fontFamily: ' Helvetica')),
                               onTap: () {
                                 _getImage(ImageSource.camera);
                                 Navigator.of(context).pop();
@@ -135,7 +196,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ),
                             ListTile(
                               leading: Icon(Icons.photo),
-                              title: Text('Gallery'),
+                              title: Text('Gallery',style: TextStyle(fontFamily: ' Helvetica')),
                               onTap: () {
                                 _getImage(ImageSource.gallery);
                                 Navigator.of(context).pop();
@@ -152,8 +213,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: Stack(
                     children: [
                       ClipOval(
-                        child: Image.asset(
+                        child: widget.userProfileImage.isNotEmpty
+                            ? Image.network(
                           widget.userProfileImage,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        )
+                            : Image.asset(
+                          'assets/images/profile.png', // Use AssetImage to load from assets
                           width: 100,
                           height: 100,
                           fit: BoxFit.cover,
@@ -167,12 +235,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           height: 40,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Color(0XFF024022),
+                            color: Color(0XFFD4AF37),
                           ),
                           child: IconButton(
                             icon: Icon(
                               Icons.edit,
-                              color: Colors.white,
+                              color: Color(0XFF00463C),
                             ),
                             onPressed: () {
                               showModalBottomSheet(
@@ -183,7 +251,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       children: [
                                         ListTile(
                                           leading: Icon(Icons.camera),
-                                          title: Text('Camera'),
+                                          title: Text('Camera',style: TextStyle(fontFamily: ' Helvetica')),
                                           onTap: () {
                                             _getImage(ImageSource.camera);
                                             Navigator.of(context).pop();
@@ -191,7 +259,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         ),
                                         ListTile(
                                           leading: Icon(Icons.photo),
-                                          title: Text('Gallery'),
+                                          title: Text('Gallery',style: TextStyle(fontFamily: ' Helvetica'),),
                                           onTap: () {
                                             _getImage(ImageSource.gallery);
                                             Navigator.of(context).pop();
@@ -213,14 +281,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               SizedBox(height: 20),
               TextFormField(
                 controller: _nameController,
+                style: TextStyle(color: Color(0XFFD4AF37)),
                 decoration: InputDecoration(
                   labelText: 'Name',
-                  labelStyle: TextStyle(color: Color(0XFF024022), fontFamily: 'Poppins'),
+                  labelStyle: TextStyle(color: Colors.white, fontFamily: ' Helvetica'),
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color(0XFF024022)),
                   ),
                 ),
-                showCursor: _showCursor,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Name is required';
@@ -232,17 +300,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               TextFormField(
                 readOnly: true,
                 onTap: () => _showGenderSelectionSheet(context),
+                style: TextStyle(color: Color(0XFFD4AF37)),
                 decoration: InputDecoration(
                   labelText: 'Gender',
-                  labelStyle: TextStyle(color: Color(0XFF024022), fontFamily: 'Poppins'),
+                  labelStyle: TextStyle(color: Colors.white, fontFamily: ' Helvetica'),
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Color(0XFF024022)),
                   ),
                   hintText: 'Select Gender',
+                  hintStyle: TextStyle(color: Color(0XFFD4AF37),fontFamily: ' Helvetica'),
                 ),
-                controller: TextEditingController(
-                  text: _selectedGender,
-                ),
+                controller: _genderController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Gender is required';
@@ -254,19 +322,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               TextFormField(
                 readOnly: true,
                 onTap: () => _selectDate(context),
+                style: TextStyle(color: Color(0XFFD4AF37)),
                 decoration: InputDecoration(
                   labelText: 'Date of Birth',
-                  labelStyle: TextStyle(color: Color(0XFF024022), fontFamily: 'Poppins'),
+                  labelStyle: TextStyle(color: Colors.white, fontFamily: ' Helvetica'),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0XFF024022)),
+                    borderSide: BorderSide(color: Color(0XFFD4AF37)),
                   ),
-                  suffixIcon: Icon(Icons.calendar_today),
+                  suffixIcon: Icon(Icons.calendar_today, color: Color(0XFFD4AF37)),
                 ),
-                controller: TextEditingController(
-                  text: _selectedDate != null
-                      ? "${_selectedDate!.toLocal()}".split(' ')[0]
-                      : '',
-                ),
+                controller: _dobController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Date of Birth is required';
@@ -278,11 +343,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    Navigator.pushNamed(context, '/profile');
+                    widget.onSave(
+                      _nameController.text,
+                      _selectedGender,
+                      _selectedDate != null ? "${_selectedDate!.toLocal()}".split(' ')[0] : '',
+                      widget.userProfileImage,
+                    );
+                    Navigator.pop(context);
                   }
                 },
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Color(0XFF024022)),
+                  backgroundColor: MaterialStateProperty.all<Color>(Color(0XFFD4AF37)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.0),
@@ -294,7 +365,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
                 child: Text(
                   'Save',
-                  style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: 15),
+                  style: TextStyle(color: Color(0XFF00463C), fontFamily: ' Helvetica', fontSize: 15),
                 ),
               ),
             ],

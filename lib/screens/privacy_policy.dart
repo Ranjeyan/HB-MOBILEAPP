@@ -8,28 +8,29 @@ class DetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Set the status bar color to white
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-      statusBarColor: Colors.white,
+      statusBarColor: Color(0XFF00463C),
     ));
 
     return Scaffold(
+      backgroundColor: Color(0XFF00463C),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            backgroundColor: Colors.white,
+            backgroundColor:Color(0XFF00463C),
             elevation: 0.0,
             expandedHeight: 80.0, // Reduced AppBar size
             pinned: true,
             title: Text(
               "Privacy Policy",
               style: TextStyle(
-                color: Colors.black,
-                fontFamily: "Gotham",
+                color: Color(0XFFD4AF37),
+                fontFamily: "Poppins",
               ),
             ),
             leading: IconButton(
               icon: Icon(
                 Icons.arrow_back,
-                color: Colors.black,
+                color: Color(0XFFD4AF37),
               ),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -50,16 +51,16 @@ class DetailsScreen extends StatelessWidget {
                         IconButton(
                           icon: Icon(
                             Icons.menu,
-                            color: Colors.grey,
+                            color: Color(0XFFD4AF37),
                           ),
                           onPressed: () {
                             // Handle menu icon press
                           },
                           iconSize: 35,
                         ),
-                        SizedBox(width: 135),
+                        SizedBox(width:125,),
                         Image.asset(
-                          'assets/images/logo.png',
+                          'assets/images/logo1.png',
                           width: 100,
                           height: 100,
                         ),
@@ -76,20 +77,20 @@ class DetailsScreen extends StatelessWidget {
                           "Privacy",
                           style: TextStyle(
                             fontSize: 40,
-                            fontFamily: "Gotham",
-                            color: Colors.black,
+                            fontFamily: "lufga",
+                            color: Color(0XFFD4AF37),
                           ),
                         ),
                       ),
-                      SizedBox(height: 4), // Vertical spacing
+                      SizedBox(height: 3), // Vertical spacing
                       Transform.translate(
-                        offset: Offset(0, -30), // Adjust this value to move up
+                        offset: Offset(0, -40), // Adjust this value to move up
                         child: Text(
                           "Policy",
                           style: TextStyle(
                             fontSize: 40,
-                            fontFamily: "Gotham",
-                            color: Colors.black,
+                            fontFamily: "lufga",
+                            color:Color(0XFFD4AF37),
                           ),
                         ),
                       ),
@@ -102,8 +103,8 @@ class DetailsScreen extends StatelessWidget {
                       "Effective Date: 28th June 2023",
                       style: TextStyle(
                         fontSize: 16,
-                        fontFamily: "Gotham",
-                        color: Colors.black,
+                        fontFamily: "Poppins",
+                        color: Color(0XFFF06151),
                       ),
                     ),
                   ),
@@ -116,7 +117,7 @@ class DetailsScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontFamily: "Gotham",
-                            color: Colors.black,
+                            color: Color(0XFFD4AF37),
                           ),
                         ),
                         WidgetSpan(
@@ -127,7 +128,7 @@ class DetailsScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontFamily: "Gotham",
-                            color: Colors.black,
+                            color: Color(0XFFD4AF37),
                           ),
                         ),
                         WidgetSpan(
@@ -138,7 +139,7 @@ class DetailsScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontFamily: "Gotham",
-                            color: Colors.black,
+                            color: Color(0XFFD4AF37),
                           ),
                         ),
                         WidgetSpan(
@@ -149,7 +150,7 @@ class DetailsScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontFamily: "Gotham",
-                            color: Colors.black,
+                            color: Color(0XFFD4AF37),
                           ),
                         ),
                       ],
@@ -165,8 +166,8 @@ class DetailsScreen extends StatelessWidget {
                           text: "Information We Collect :\n",
                           style: TextStyle(
                             fontSize: 16,
-                            fontFamily: "Gotham",
-                            color: Colors.black,
+                            fontFamily: "Poppins",
+                            color: Color(0XFFF06151),
                           ),
                         ),
                         WidgetSpan(
@@ -177,7 +178,7 @@ class DetailsScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontFamily: "Gotham",
-                            color: Colors.black,
+                            color: Color(0XFFD4AF37),
                           ),
                         ),
                       ],
@@ -193,8 +194,8 @@ class DetailsScreen extends StatelessWidget {
                           text: "Use of Information :\n",
                           style: TextStyle(
                             fontSize: 16,
-                            fontFamily: "Gotham",
-                            color: Colors.black,
+                            fontFamily: "Poppins",
+                            color: Color(0XFFF06151),
                           ),
                         ),
                         WidgetSpan(
@@ -205,7 +206,7 @@ class DetailsScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontFamily: "Gotham",
-                            color: Colors.black,
+                            color: Color(0XFFD4AF37),
                           ),
                         ),
                       ],
@@ -221,8 +222,8 @@ class DetailsScreen extends StatelessWidget {
                           text: "Third-Party Service Provider :\n",
                           style: TextStyle(
                             fontSize: 16,
-                            fontFamily: "Gotham",
-                            color: Colors.black,
+                            fontFamily: "Poppins",
+                            color:Color(0XFFF06151),
                           ),
                         ),
                         WidgetSpan(
@@ -233,7 +234,7 @@ class DetailsScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontFamily: "Gotham",
-                            color: Colors.black,
+                            color:Color(0XFFD4AF37),
                           ),
                         ),
                       ],
@@ -249,8 +250,8 @@ class DetailsScreen extends StatelessWidget {
                           text: "Data Retention and Security :\n",
                           style: TextStyle(
                             fontSize: 16,
-                            fontFamily: "Gotham",
-                            color: Colors.black,
+                            fontFamily: "Poppins",
+                            color:Color(0XFFF06151),
                           ),
                         ),
                         WidgetSpan(
@@ -261,7 +262,7 @@ class DetailsScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontFamily: "Gotham",
-                            color: Colors.black,
+                            color: Color(0XFFD4AF37),
                           ),
                         ),
                       ],
@@ -277,8 +278,8 @@ class DetailsScreen extends StatelessWidget {
                           text: "Disclosure of Information :\n",
                           style: TextStyle(
                             fontSize: 16,
-                            fontFamily: "Gotham",
-                            color: Colors.black,
+                            fontFamily: "Poppins",
+                            color: Color(0XFFF06151),
                           ),
                         ),
                         WidgetSpan(
@@ -289,7 +290,7 @@ class DetailsScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontFamily: "Gotham",
-                            color: Colors.black,
+                            color: Color(0XFFD4AF37),
                           ),
                         ),
                       ],
@@ -305,8 +306,8 @@ class DetailsScreen extends StatelessWidget {
                           text: "Your Rights :\n",
                           style: TextStyle(
                             fontSize: 16,
-                            fontFamily: "Gotham",
-                            color: Colors.black,
+                            fontFamily: "Poppins",
+                            color: Color(0XFFF06151),
                           ),
                         ),
                         WidgetSpan(
@@ -317,7 +318,7 @@ class DetailsScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontFamily: "Gotham",
-                            color: Colors.black,
+                            color: Color(0XFFD4AF37),
                           ),
                         ),
                       ],
@@ -333,8 +334,8 @@ class DetailsScreen extends StatelessWidget {
                           text: "Changes to the Privacy Policy :\n",
                           style: TextStyle(
                             fontSize: 16,
-                            fontFamily: "Gotham",
-                            color: Colors.black,
+                            fontFamily: "Poppins",
+                            color: Color(0XFFF06151),
                           ),
                         ),
                         WidgetSpan(
@@ -345,7 +346,7 @@ class DetailsScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontFamily: "Gotham",
-                            color: Colors.black,
+                            color: Color(0XFFD4AF37),
                           ),
                         ),
                       ],
@@ -361,8 +362,8 @@ class DetailsScreen extends StatelessWidget {
                           text: "Contact Us :\n",
                           style: TextStyle(
                             fontSize: 16,
-                            fontFamily: "Gotham",
-                            color: Colors.black,
+                            fontFamily: "Poppins",
+                            color: Color(0XFFF06151),
                           ),
                         ),
                         WidgetSpan(
@@ -373,7 +374,7 @@ class DetailsScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontFamily: "Gotham",
-                            color: Colors.black,
+                            color: Color(0XFFD4AF37),
                           ),
                         ),
                       ],
@@ -390,7 +391,7 @@ class DetailsScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontFamily: "Gotham",
-                            color: Colors.black,
+                            color: Color(0XFFD4AF37),
                           ),
                         ),
                       ],

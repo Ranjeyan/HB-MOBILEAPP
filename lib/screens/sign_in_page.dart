@@ -1,246 +1,325 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:healingbee/screens/privacy_policy.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Mobile_number.dart';
-import 'faq.dart';
-import 'user_name_page.dart';
+import 'App_home_page.dart';
+import 'create_account.dart';
+import 'forgot_pass.dart';
 
-class HomePage extends StatelessWidget {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MaterialApp(
+    home: HomePage(),
+  ));
+}
+
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  bool isPasswordVisible = false;
+  bool isLoading = false;
+  FocusNode emailFocusNode = FocusNode();
+  FocusNode passwordFocusNode = FocusNode();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  bool resetEmailSent = false;
+
+  @override
+  void dispose() {
+    emailFocusNode.dispose();
+    passwordFocusNode.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-    ));
-
     return Scaffold(
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height * 0.5,
-              child: Stack(
-                children: [
-                  Image.asset(
-                    'assets/images/front_image.png',
-                    width: MediaQuery.of(context).size.width,
-                    fit: BoxFit.cover,
+      backgroundColor: Color(0XFF00463C),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(height: 150.0),
+              Transform(
+                transform: Matrix4.translationValues(1.0, 20.0, 0.0),
+                child: Container(
+                  height: 200.0,
+                  width: 200.0,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/logo1.png'),
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ],
+                ),
               ),
-            ),
-            SizedBox(height: 60.0),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "Sign-in to proceed",
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "ReadexPro",
-                      color: Color(0XFF024022),
-                    ),
-                  ),
-                  SizedBox(height: 40.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      signInWithGoogle(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0XFF024022),
-                      foregroundColor: Color(0XFF024022),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(13.0),
-                        side: BorderSide(color: Colors.black),
-                      ),
-                      elevation: 0.0,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 58.0,
-                        vertical: 15.0,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          'assets/images/google.png',
-                          width: 30.0,
-                          height: 30.0,
-                        ),
-                        SizedBox(width: 16.0),
-                        Text(
-                          'Continue with Google',
-                          style: TextStyle(
-                            fontSize: 17.0,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "Poppins",
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MobileNumberPage(),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0XFF024022),
-                      foregroundColor: Color(0XFF024022),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        side: BorderSide(color: Colors.black),
-                      ),
-                      elevation: 0.0,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 58.0,
-                        vertical: 15.0,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          'assets/images/mobile.png',
-                          width: 30.0,
-                          height: 30.0,
-                        ),
-                        SizedBox(width: 16.0),
-                        Text(
-                          'Continue with Mobile',
-                          style: TextStyle(
-                            fontSize: 17.0,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "Poppins",
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Spacer(),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: RichText(
-                text: TextSpan(
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    fontFamily: "ReadexPro",
-                    color: Colors.black,
-                  ),
+              SizedBox(height: 20.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                child: Column(
                   children: [
-                    TextSpan(
-                      text: "By continuing, you're agreeing to our ",
-                      style: TextStyle(fontSize: 12.0),
-                    ),
-                    TextSpan(
-                      text: "Privacy Policy",
-                      style: TextStyle(
-                        color: Color(0XFF024022),
-                        decoration: TextDecoration.underline,
-                        fontSize: 12.0,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => DetailsScreen()),
-                          );
-                        },
-                    ),
-                    TextSpan(
-                      text: " & ",
-                      style: TextStyle(fontSize: 12.0),
-                    ),
-                    TextSpan(
-                      text: "FAQ's",
-                      style: TextStyle(
-                        color: Color(0XFF024022),
-                        fontSize: 12.0,
-                        decoration: TextDecoration.underline,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FAQPage(),
+                    buildCustomInputField(
+                        'assets/images/mail.png', 'Email', emailFocusNode),
+                    SizedBox(height: 35.0),
+                    buildPasswordInputField(),
+                    SizedBox(height: 16.0),
+                    buildForgotPasswordText(),
+                    SizedBox(height: 20.0),
+                    buildLoginStack(),
+                    SizedBox(height: 20.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'No account? ',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CreateAccountPage(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Create one',
+                            style: TextStyle(
+                              color: Color(0XFFD4AF37),
+                              fontSize: 16.0,
                             ),
-                          );
-                        },
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
+              SizedBox(height: 20.0),
+              if (resetEmailSent)
+                Text(
+                  'Email has been sent to your mail. Please check your mail.',
+                  style: TextStyle(
+                    color: Color(0XFF00463C),
+                    fontSize: 16.0,
+                  ),
+                ),
+              SizedBox(height: 20.0),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildCustomInputField(String logoAsset, String label, FocusNode focusNode,
+      {bool isPassword = false}) {
+    return Focus(
+      onFocusChange: (hasFocus) {
+        // Handle focus changes if needed
+      },
+      child: Container(
+        alignment: Alignment.centerLeft,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Image.asset(
+                  logoAsset,
+                  height: 40.0,
+                  width: 35.0,
+                ),
+                SizedBox(width: 5.0),
+                SizedBox(width: 10.0),
+                Container(
+                  color: Colors.white,
+                  width: 1.0,
+                  height: 40.0,
+                  margin: EdgeInsets.only(top: 10.0),
+                ),
+                SizedBox(width: 25.0),
+                Expanded(
+                  child: TextFormField(
+                    controller: isPassword ? passwordController : emailController,
+                    focusNode: focusNode,
+                    obscureText: isPassword && !isPasswordVisible,
+                    decoration: InputDecoration(
+                      labelText: label,
+                      labelStyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18.0,
+                      ),
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.only(bottom: 5.0),
+                      suffixIcon: isPassword
+                          ? IconButton(
+                        icon: Icon(
+                          isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Color(0XFFD4AF37),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            isPasswordVisible = !isPasswordVisible;
+                          });
+                        },
+                      )
+                          : null,
+                      floatingLabelBehavior: FloatingLabelBehavior.auto,
+                    ),
+                    style: TextStyle(color: Color(0XFFD4AF37)),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10.0),
+            Container(
+              height: 1.0,
+              width: double.infinity,
+              color: Colors.white,
+              margin: EdgeInsets.only(top: 0.0),
             ),
           ],
         ),
       ),
     );
   }
-}
 
-Future<void> signInWithGoogle(BuildContext context) async {
-  try {
-    // Sign out the user first
-    await signOutGoogle();
+  Widget buildPasswordInputField() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
+        );
+      },
+      child: buildCustomInputField(
+          'assets/images/pass.png', 'Password', passwordFocusNode,
+          isPassword: true),
+    );
+  }
 
-    // Then, sign in with a new Google account
-    GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  Widget buildForgotPasswordText() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0),
+        child: Text(
+          'Forgotten your password?',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16.0,
+            decoration: TextDecoration.underline,
+          ),
+        ),
+      ),
+    );
+  }
 
-    if (googleUser != null) {
-      GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
+  Widget buildLoginStack() {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Column(
+          children: [
+            SizedBox(height: 40.0),
+            ElevatedButton(
+              onPressed: isLoading ? null : signInWithEmailAndPassword,
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                primary: Color(0XFFD4AF37),
+                onPrimary: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 130.0,
+                  vertical: 18.0,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)
+                ),
+              ),
+              child: Text(
+                'Log in',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Color(0XFF00463C),
+                ),
+              ),
+            ),
+          ],
+        ),
+        Positioned(
+          top: MediaQuery.of(context).size.height / 20,
+          child: Visibility(
+            visible: isLoading,
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0XFFF06151)),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
-      AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+  Future<void> signInWithEmailAndPassword() async {
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
       );
 
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-
       if (userCredential.user != null) {
-        print("Signed in with Google: ${userCredential.user!.displayName}");
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
 
-        String userEmail = userCredential.user!.email ?? ''; // Fetch email
-
-        Navigator.of(context).push(
+        Navigator.pushReplacement(
+          context,
           MaterialPageRoute(
-            builder: (context) => NextPage(userName: userCredential.user!.displayName ?? '', email: userEmail), // Pass email to NextPage
+            builder: (context) => AppEntryPage(user: userCredential.user),
           ),
         );
-      } else {
-        print("Failed to sign in with Google");
       }
-    } else {
-      print("Google Sign-In canceled by user");
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Invalid email or password. Please try again.'),
+          backgroundColor: Color(0XFFF06151),
+        ),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
-  } catch (error) {
-    print("Error during Google Sign-In: $error");
-  }
-}
-
-
-
-Future<void> signOutGoogle() async {
-  try {
-    await GoogleSignIn().signOut();
-  } catch (error) {
-    print("Error during Google Sign-Out: $error");
   }
 }
