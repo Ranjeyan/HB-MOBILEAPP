@@ -127,11 +127,11 @@ class _AppEntryPageState extends State<AppEntryPage> {
                               backgroundColor: Color(0XFF00463C), // Replace with your desired color
                               title: Text(
                                 'Welcome back, $userName!',
-                                style: const TextStyle(fontSize: 28.0, color: Color(0XFFD4AF37)),
+                                style: const TextStyle(fontSize: 28.0, color: Color(0XFFD4AF37),fontFamily: 'Helvetica'),
                               ),
                               actions: [
                                 IconButton(
-                                  icon: Icon(Icons.notifications),
+                                  icon: Icon(Icons.notifications,color: Color(0XFFD4AF37) ,),
                                   onPressed: () {
                                     // Handle notification button click
                                   },

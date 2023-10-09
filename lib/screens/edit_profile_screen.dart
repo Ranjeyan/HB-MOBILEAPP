@@ -70,7 +70,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         final imageUrl = await storageRef.getDownloadURL();
         if (imageUrl != null) {
           // Update user's profile image in Firestore
-          await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .update({
             'profileImage': imageUrl,
           });
 
@@ -78,9 +81,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           widget.onSave(
             _nameController.text,
             _selectedGender,
-            _selectedDate != null ? "${_selectedDate!.toLocal()}".split(' ')[0] : '',
+            _selectedDate != null
+                ? "${_selectedDate!.toLocal()}".split(' ')[0]
+                : '',
             imageUrl, // Update the user's profile image URL
           );
+
+          // Pop the EditProfileScreen to return to the previous screen
+          Navigator.pop(context);
         }
       });
     } catch (e) {
@@ -349,7 +357,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       _selectedDate != null ? "${_selectedDate!.toLocal()}".split(' ')[0] : '',
                       widget.userProfileImage,
                     );
-                    Navigator.pop(context);
                   }
                 },
                 style: ButtonStyle(

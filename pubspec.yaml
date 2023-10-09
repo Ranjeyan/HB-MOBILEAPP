@@ -73,7 +73,7 @@ dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/app_logo.png"
+  image_path: "assets/images/spalsh_logo.png"
 
 
 
@@ -124,6 +124,7 @@ flutter:
     - assets/icons/quick_note.png
     - assets/images/arrow.png
     - assets/images/thalapathy.png
+    - assets/images/nature.jpg
     - assets/images/man-covering-face-with-hands.jpg
     - assets/images/human.jpg
     - assets/images/apple.png

@@ -9,12 +9,10 @@ import '../main.dart';
 import 'edit_profile_screen.dart';
 import 'notify.dart';
 
-
 class ProfileScreen extends StatefulWidget {
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
-
 
 class _ProfileScreenState extends State<ProfileScreen> {
   String selectedLanguage = 'English';
@@ -59,12 +57,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ));
   }
 
-
   Future<void> _fetchUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      // Fetch user data from Firestore using the user's UID
       DocumentSnapshot userSnapshot =
       await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
 
@@ -74,23 +70,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           userEmail = userSnapshot.get('email') ?? '';
         });
 
-        // Load the user's profile image from Firestore Storage
-        final userProfileImageRef = userSnapshot.get('profileImage');
-        if (userProfileImageRef != null && userProfileImageRef.isNotEmpty) {
-          // Assuming 'profileImage' is the field in Firestore that stores the image URL
-          userProfileImage = userProfileImageRef;
+        final userProfileImageUrl = userSnapshot.get('profileImage');
+        if (userProfileImageUrl != null && userProfileImageUrl.isNotEmpty) {
+          userProfileImage = userProfileImageUrl;
         } else {
-          // If 'profileImage' field is not available or empty, use a default image
           userProfileImage = 'assets/images/profile.png';
         }
 
-        // Save the user's profile image URL to SharedPreferences
         prefs.setString('userProfileImage', userProfileImage);
       }
     }
   }
-
-
 
   Future<void> _updateUserDataInFirestore(String name, String gender, String dob, String image) async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -309,7 +299,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: Stack(
         children: [
           Positioned(
-            top: -MediaQuery.of(context).size.height / 2.3,
+            top: -MediaQuery.of(context).size.height / 2.1,
             left: -(MediaQuery.of(context).size.width * 0.5),
             right: -(MediaQuery.of(context).size.width * 0.5),
             child: Container(
@@ -322,7 +312,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           Positioned(
-            top: 190,
+            top: 140,
             left: 0,
             right: 0,
             bottom: 0,
@@ -338,11 +328,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                     child: Container(
                       margin: EdgeInsets.only(bottom: 20),
+                      width: 130,
+                      height: 130,
                       child: ClipOval(
-                        child: Image.asset(
-                          userProfileImage,
+                        child: userProfileImage.startsWith('http') // Check if it's a network URL
+                            ? Image.network(
+                          userProfileImage, // Load network image
                           width: 130,
                           height: 130,
+                          fit: BoxFit.cover,
+                        )
+                            : Image.asset(
+                          userProfileImage, // Load asset image
+                          width: 130,
+                          height: 130,
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
@@ -351,7 +351,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     userName,
                     style: TextStyle(
                       fontSize: 20.0,
-                      fontFamily: ' Helvetica',
+                      fontFamily: 'Helvetica',
                       fontWeight: FontWeight.bold,
                       color: Color(0XFFD4AF37),
                     ),
@@ -361,26 +361,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     userEmail,
                     style: TextStyle(
                       fontSize: 18.0,
-                      fontFamily: ' Helvetica',
+                      fontFamily: 'Helvetica',
                       color: Colors.grey,
                     ),
                   ),
+
                   SizedBox(height: 40),
                   ListTile(
                     leading: Icon(Icons.privacy_tip, color: Color(0XFFF06151)),
                     title: Text(
                       'Privacy Policy',
                       style: TextStyle(
-                        fontFamily: ' Helvetica',
+                        fontFamily: 'Helvetica',
                         color: Color(0XFFD4AF37),
                       ),
                     ),
                     onTap: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                          builder: (context) => DetailsScreen()
-                      ),
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailsScreen(),
+                        ),
                       );
                     },
                   ),
@@ -390,7 +391,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: Text(
                       'App Language',
                       style: TextStyle(
-                        fontFamily: ' Helvetica',
+                        fontFamily: 'Helvetica',
                         color: Color(0XFFD4AF37),
                       ),
                     ),
@@ -398,7 +399,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       selectedLanguage,
                       style: TextStyle(
                         color: Color(0XFFF06151),
-                        fontFamily: ' Helvetica',
+                        fontFamily: 'Helvetica',
                       ),
                     ),
                     onTap: () {
@@ -411,7 +412,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: Text(
                       'Notifications',
                       style: TextStyle(
-                        fontFamily: ' Helvetica',
+                        fontFamily: 'Helvetica',
                         color: Color(0XFFD4AF37),
                       ),
                     ),
@@ -425,7 +426,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: Text(
                       'Logout',
                       style: TextStyle(
-                        fontFamily: ' Helvetica',
+                        fontFamily: 'Helvetica',
                         color: Color(0XFFD4AF37),
                       ),
                     ),
@@ -436,8 +437,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(height: 25),
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 10),
-                    width: MediaQuery.of(context).size.width * 0.6, // Adjust the width as needed
+                    width: 160, // Expand the button to the full width
                     child: InkWell(
+                      borderRadius: BorderRadius.circular(10),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -464,17 +466,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         padding: EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: Color(0XFF00463C),
-                          borderRadius: BorderRadius.circular(10.0),
                           border: Border.all(
                             color: Color(0XFFD4AF37),
-                            width: 1.5,
+                            width: 2.0, // Increase the border width for better visibility
                           ),
                         ),
                         child: Center(
                           child: Text(
                             'Edit Profile',
                             style: TextStyle(
-                              fontFamily: ' Helvetica',
+                              fontFamily: 'Helvetica',
                               color: Color(0XFFD4AF37),
                               fontSize: 16.0,
                             ),
@@ -483,6 +484,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
+
                 ],
               ),
             ),
