@@ -25,12 +25,19 @@ class QuickNotesScreen extends StatefulWidget {
 
 class _QuickNotesScreenState extends State<QuickNotesScreen> {
   List<Note> notes = [];
-  List<int> selectedCards = []; // List of selected card indices
+  List<int> selectedCards = [];
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final CollectionReference _notesCollection =
   FirebaseFirestore.instance.collection('notes');
 
-  // Function to get the current user's email
+  late User? _currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentUser = FirebaseAuth.instance.currentUser;
+  }
+
   String? getCurrentUserEmail() {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -45,7 +52,7 @@ class _QuickNotesScreenState extends State<QuickNotesScreen> {
       _notesCollection.add({
         'title': title,
         'content': content,
-        'userEmail': userEmail, // Associate note with user's email
+        'userEmail': userEmail,
       }).then((value) {
         setState(() {
           notes.add(Note(title: title, content: content));
@@ -64,13 +71,12 @@ class _QuickNotesScreenState extends State<QuickNotesScreen> {
       _notesCollection.doc(notes[index].title).update({
         'title': title,
         'content': content,
-        'userEmail': userEmail, // Associate note with user's email
+        'userEmail': userEmail,
       });
     }
   }
 
   void toggleSelect(int index) {
-    // Toggle the selection of a card
     setState(() {
       if (selectedCards.contains(index)) {
         selectedCards.remove(index);
@@ -81,13 +87,7 @@ class _QuickNotesScreenState extends State<QuickNotesScreen> {
   }
 
   void handleAction(String action) {
-    // Handle the action when an action icon is pressed in the AppBar
-    if (action == 'pin') {
-      // Handle pin action
-    } else if (action == 'notify') {
-      // Handle notify action
-    } else if (action == 'delete') {
-      // Handle delete action
+    if (action == 'delete' && _currentUser != null) {
       for (var index in selectedCards) {
         _notesCollection.doc(notes[index].title).delete();
         notes.removeAt(index);
@@ -103,11 +103,13 @@ class _QuickNotesScreenState extends State<QuickNotesScreen> {
       appBar: AppBar(
         backgroundColor: Color(0XFF00463C),
         elevation: 0,
-        title: Text('Mental Wellness Tracker',style: TextStyle(fontFamily:'Helvetica'),),
+        title: Text(
+          'Mental Wellness Tracker',
+          style: TextStyle(fontFamily: 'Helvetica'),
+        ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back), // Add the back arrow icon
+          icon: Icon(Icons.arrow_back),
           onPressed: () {
-            // Handle navigation back
             Navigator.pop(context);
           },
         ),
@@ -122,7 +124,7 @@ class _QuickNotesScreenState extends State<QuickNotesScreen> {
               icon: Icon(Icons.notifications),
               onPressed: () => handleAction('notify'),
             ),
-          if (selectedCards.isNotEmpty)
+          if (selectedCards.isNotEmpty && _currentUser != null)
             IconButton(
               icon: Icon(Icons.delete),
               onPressed: () => handleAction('delete'),
@@ -132,7 +134,7 @@ class _QuickNotesScreenState extends State<QuickNotesScreen> {
       body: SingleChildScrollView(
         child: StreamBuilder(
           stream: _notesCollection
-              .where('userEmail', isEqualTo: getCurrentUserEmail()) // Query notes for the current user
+              .where('userEmail', isEqualTo: getCurrentUserEmail())
               .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {

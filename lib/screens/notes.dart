@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class NoteEditor extends StatefulWidget {
   final String initialTitle;
   final String initialContent;
 
-  // Add the constructor that accepts initial values
   NoteEditor({required this.initialTitle, required this.initialContent});
 
   @override
@@ -13,127 +13,59 @@ class NoteEditor extends StatefulWidget {
 }
 
 class _NoteEditorState extends State<NoteEditor> {
-  TextEditingController titleController = TextEditingController();
-  TextEditingController noteController = TextEditingController();
+  // Initialize Firebase Authentication
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController noteController = TextEditingController();
   bool isTitleFocused = false;
   bool isNoteFocused = false;
 
   @override
   void initState() {
     super.initState();
-
-    // Set initial values when the widget is initialized
     titleController.text = widget.initialTitle;
     noteController.text = widget.initialContent;
   }
 
-  void _onTitleTap() {
-    setState(() {
-      isTitleFocused = true;
-    });
+  // Function to get the current user
+  User? getCurrentUser() {
+    return _auth.currentUser;
   }
 
-  void _onNoteTap() {
-    setState(() {
-      isNoteFocused = true;
-    });
-  }
+  // Function to delete a note
+  void deleteNote() async {
+    final User? user = getCurrentUser();
+    if (user != null) {
+      final title = titleController.text;
+      final note = noteController.text;
+      final userEmail = user.email;
 
-  void _showBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          color: Color(0XFF00463C),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              _buildBottomSheetItem(
-                icon: Icons.delete,
-                text: 'Delete',
-                onPressed: () {
-                  // Implement delete functionality here
-                  _deleteNote(); // Call your delete method
-                  Navigator.pop(context); // Close the bottom sheet
-                },
-              ),
-              _buildBottomSheetItem(
-                icon: Icons.send,
-                text: 'Send',
-                onPressed: () {
-                  // Implement send functionality here
-                  _sendNote(); // Call your send method
-                  Navigator.pop(context); // Close the bottom sheet
-                },
-              ),
-              _buildBottomSheetItem(
-                icon: Icons.copy,
-                text: 'Make a Copy',
-                onPressed: () {
-                  // Implement make a copy functionality here
-                  _makeCopy(); // Call your make a copy method
-                  Navigator.pop(context); // Close the bottom sheet
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+      // Check if the user is authenticated and the note belongs to the user
+      if (userEmail != null) {
+        // Perform the delete operation in Firestore
+        await _firestore
+            .collection('notes')
+            .where('userEmail', isEqualTo: userEmail)
+            .where('title', isEqualTo: title)
+            .where('content', isEqualTo: note)
+            .get()
+            .then((QuerySnapshot querySnapshot) {
+          querySnapshot.docs.forEach((doc) {
+            doc.reference.delete();
+          });
+        });
 
-  Widget _buildBottomSheetItem({IconData? icon, String? text, VoidCallback? onPressed}) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.white),
-      title: Text(
-        text ?? '',
-        style: TextStyle(fontSize: 16, color: Colors.white),
-      ),
-      onTap: onPressed,
-    );
-  }
-
-  void _deleteNote() {
-    // Implement delete functionality here
-    final title = titleController.text;
-    final note = noteController.text;
-
-    // Perform the delete operation based on your data source
-    // For example, you can use Firestore to delete the note
-
-    // After deleting, you might want to navigate back or perform any necessary updates
-    Navigator.pop(context, {'action': 'delete', 'title': title, 'note': note});
-  }
-
-  void _sendNote() {
-    // Implement send functionality here
-    final title = titleController.text;
-    final note = noteController.text;
-
-    // Perform the send operation based on your requirements
-    // For example, you can send the note through email or messaging
-
-    // After sending, you might want to navigate back or perform any necessary updates
-    Navigator.pop(context, {'action': 'send', 'title': title, 'note': note});
-  }
-
-  void _makeCopy() {
-    // Implement make a copy functionality here
-    final title = titleController.text;
-    final note = noteController.text;
-
-    // Create a copy of the note and handle it based on your data source
-    // For example, you can duplicate the note in Firestore
-
-    // After making a copy, you might want to navigate back or perform any necessary updates
-    Navigator.pop(context, {'action': 'copy', 'title': title, 'note': note});
+        // Navigate back after deleting
+        Navigator.pop(context);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // Automatically save the note when the user navigates back
         final title = titleController.text;
         final note = noteController.text;
         Navigator.pop(context, {'action': 'save', 'title': title, 'note': note});
@@ -146,9 +78,8 @@ class _NoteEditorState extends State<NoteEditor> {
           elevation: 0,
           title: Text(''),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back,color: Color(0XFFD4AF37),),
+            icon: Icon(Icons.arrow_back, color: Color(0XFFD4AF37)),
             onPressed: () {
-              // Save the note
               final title = titleController.text;
               final note = noteController.text;
               Navigator.pop(context, {'action': 'save', 'title': title, 'note': note});
@@ -156,13 +87,13 @@ class _NoteEditorState extends State<NoteEditor> {
           ),
           actions: [
             IconButton(
-              icon: Icon(Icons.push_pin,color: Color(0XFFD4AF37),),
+              icon: Icon(Icons.push_pin, color: Color(0XFFD4AF37)),
               onPressed: () {
                 // Implement your pin functionality here
               },
             ),
             IconButton(
-              icon: Icon(Icons.notifications,color: Color(0XFFD4AF37),),
+              icon: Icon(Icons.notifications, color: Color(0XFFD4AF37)),
               onPressed: () {
                 // Implement your notification functionality here
               },
@@ -175,40 +106,54 @@ class _NoteEditorState extends State<NoteEditor> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               GestureDetector(
-                onTap: _onTitleTap,
+                onTap: () {
+                  setState(() {
+                    isTitleFocused = true;
+                  });
+                },
                 child: Container(
                   decoration: BoxDecoration(
                     border: isTitleFocused
-                        ? Border.all(color: Color(0XFFD4AF37)) // Add border when focused
+                        ? Border.all(color: Color(0XFFD4AF37))
                         : null,
                   ),
                   child: TextField(
                     controller: titleController,
                     decoration: InputDecoration(
                       labelText: 'Title',
-                      labelStyle: TextStyle(color: Color(0XFFD4AF37), fontSize: 26,fontFamily: 'Helvetica'),
-                      border: InputBorder.none, // Remove the underline
+                      labelStyle: TextStyle(
+                          color: Color(0XFFD4AF37),
+                          fontSize: 26,
+                          fontFamily: 'Helvetica'),
+                      border: InputBorder.none,
                     ),
-                    cursorColor: Color(0XFFD4AF37), // Set cursor color
-                    style: TextStyle(color: Color(0XFFD4AF37)), // Set input text color
+                    cursorColor: Color(0XFFD4AF37),
+                    style: TextStyle(color: Color(0XFFD4AF37)),
                   ),
                 ),
               ),
               SizedBox(height: 16),
               GestureDetector(
-                onTap: _onNoteTap,
+                onTap: () {
+                  setState(() {
+                    isNoteFocused = true;
+                  });
+                },
                 child: Container(
                   child: TextField(
                     controller: noteController,
-                    maxLines: null, // Allow multiple lines
+                    maxLines: null,
                     keyboardType: TextInputType.multiline,
                     decoration: InputDecoration(
                       labelText: 'Note',
-                      labelStyle: TextStyle(color: Color(0XFFD4AF37), fontSize: 18,fontFamily: 'Helvetica'),
-                      border: InputBorder.none, // Remove the underline
+                      labelStyle: TextStyle(
+                          color: Color(0XFFD4AF37),
+                          fontSize: 18,
+                          fontFamily: 'Helvetica'),
+                      border: InputBorder.none,
                     ),
-                    cursorColor: Color(0XFFD4AF37), // Set cursor color
-                    style: TextStyle(color: Color(0XFFD4AF37)), // Set input text color
+                    cursorColor: Color(0XFFD4AF37),
+                    style: TextStyle(color: Color(0XFFD4AF37)),
                   ),
                 ),
               ),
@@ -217,12 +162,55 @@ class _NoteEditorState extends State<NoteEditor> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            _showBottomSheet(context);
+            // Show the bottom sheet for actions
+            showModalBottomSheet(
+              context: context,
+              builder: (BuildContext context) {
+                return Container(
+                  color: Color(0XFF00463C),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      _buildBottomSheetItem(
+                        icon: Icons.delete,
+                        text: 'Delete',
+                        onPressed: deleteNote,
+                      ),
+                      _buildBottomSheetItem(
+                        icon: Icons.send,
+                        text: 'Send',
+                        onPressed: () {
+                          // Implement send functionality here
+                        },
+                      ),
+                      _buildBottomSheetItem(
+                        icon: Icons.copy,
+                        text: 'Make a Copy',
+                        onPressed: () {
+                          // Implement make a copy functionality here
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
           },
           backgroundColor: Color(0XFFD4AF37),
-          child: Icon(Icons.more_vert,color: Color(0XFF00463C),),
+          child: Icon(Icons.more_vert, color: Color(0XFF00463C)),
         ),
       ),
+    );
+  }
+
+  Widget _buildBottomSheetItem({IconData? icon, String? text, VoidCallback? onPressed}) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.white),
+      title: Text(
+        text ?? '',
+        style: TextStyle(fontSize: 16, color: Colors.white),
+      ),
+      onTap: onPressed,
     );
   }
 }

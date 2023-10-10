@@ -85,6 +85,7 @@ class _HomePageState extends State<HomePage> {
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16.0,
+                            fontFamily: 'Helvetica'
                           ),
                         ),
                         GestureDetector(
@@ -101,6 +102,7 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(
                               color: Color(0XFFD4AF37),
                               fontSize: 16.0,
+                              fontFamily: 'Helvetica'
                             ),
                           ),
                         ),
@@ -116,6 +118,7 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(
                     color: Color(0XFF00463C),
                     fontSize: 16.0,
+                    fontFamily: 'Helvetica'
                   ),
                 ),
               SizedBox(height: 20.0),
@@ -234,6 +237,7 @@ class _HomePageState extends State<HomePage> {
             color: Colors.white,
             fontSize: 16.0,
             decoration: TextDecoration.underline,
+            fontFamily: 'Helvetica'
           ),
         ),
       ),
@@ -266,6 +270,7 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(
                   fontSize: 16.0,
                   color: Color(0XFF00463C),
+                  fontFamily: 'Helvetica'
                 ),
               ),
             ),
@@ -312,7 +317,7 @@ class _HomePageState extends State<HomePage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Invalid email or password. Please try again.'),
+          content: Text('Invalid email or password. Please try again.',style: TextStyle(fontFamily: 'Helvetica'),),
           backgroundColor: Color(0XFFF06151),
         ),
       );

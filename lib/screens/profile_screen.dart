@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
 import 'edit_profile_screen.dart';
-import 'notify.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override

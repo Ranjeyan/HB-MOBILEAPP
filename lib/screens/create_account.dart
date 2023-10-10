@@ -146,6 +146,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   'Sign Up',
                   style: TextStyle(
                     fontSize: 16.0,
+                    fontFamily: 'Helvetica'
                   ),
                 ),
               ),
@@ -158,6 +159,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16.0,
+                      fontFamily: 'Helvetica'
                     ),
                   ),
                   GestureDetector(
@@ -169,6 +171,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                       style: TextStyle(
                         color: Color(0XFFD4AF37),
                         fontSize: 16.0,
+                        fontFamily: 'Helvetica'
                       ),
                     ),
                   ),

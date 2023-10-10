@@ -67,29 +67,36 @@ class _AppEntryPageState extends State<AppEntryPage> {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Exit App?'),
-          content: Text('Do you want to exit the app?'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                // User canceled exit
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                // User confirmed exit
-                exitConfirmed = true;
-                Navigator.of(context).pop();
-              },
-              child: Text('Exit'),
-            ),
-          ],
+        return Theme(
+          data: ThemeData(
+            // Change the background color of the AlertDialog
+            dialogBackgroundColor: Color(0XFFD4AF37), // Replace 'Colors.blue' with your desired color
+          ),
+          child: AlertDialog(
+            title: Text('Exit App?',style: TextStyle(color: Color(0XFF00463C)),),
+            content: Text('Do you want to exit the app?',style: TextStyle(color: Color(0XFF00463C)),),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  // User canceled exit
+                  Navigator.of(context).pop();
+                },
+                child: Text('Cancel',style: TextStyle(color: Color(0XFF00463C)),),
+              ),
+              TextButton(
+                onPressed: () {
+                  // User confirmed exit
+                  exitConfirmed = true;
+                  Navigator.of(context).pop();
+                },
+                child: Text('Exit',style: TextStyle(color: Color(0XFF00463C))),
+              ),
+            ],
+          ),
         );
       },
     );
+
 
     return exitConfirmed;
   }
