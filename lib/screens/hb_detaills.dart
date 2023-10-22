@@ -31,7 +31,7 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0XFF00463C),
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           SizedBox(height: 70), // Add some space at the top
@@ -59,7 +59,7 @@ class _DetailScreenState extends State<DetailScreen> {
                         style: TextStyle(
                             fontSize: 35,
                             fontWeight: FontWeight.bold,
-                            color:Color(0XFFD4AF37)
+                            color:Colors.black
                         ),
                       ),
                       SizedBox(height: 25),
@@ -68,7 +68,8 @@ class _DetailScreenState extends State<DetailScreen> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 18,
-                          color: Colors.grey,
+                          color: Colors.black54,
+                          fontFamily: 'Helvetica'
                         ),
                       )
                     ],
@@ -98,7 +99,7 @@ class _DetailScreenState extends State<DetailScreen> {
               width: 400,
               child: TextButton(
                 child: Text(
-                  currentIndex == contents.length - 1 ? "Get Started" : "Next",
+                  currentIndex == contents.length - 1 ? "Get Started" : "Next",style: TextStyle(fontFamily: 'Helvetica',fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
                   if (currentIndex == contents.length - 1) {
@@ -116,8 +117,8 @@ class _DetailScreenState extends State<DetailScreen> {
                   );
                 },
                 style: TextButton.styleFrom(
-                  backgroundColor: Color(0XFFD4AF37),
-                  primary: Color(0XFF00463C),
+                  backgroundColor: Colors.black,
+                  primary: Colors.white38,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -137,7 +138,7 @@ class _DetailScreenState extends State<DetailScreen> {
       margin: EdgeInsets.only(right: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: Color(0XFFD4AF37),
+        color: Colors.black54,
       ),
     );
   }

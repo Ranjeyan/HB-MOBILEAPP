@@ -7,14 +7,6 @@ import 'App_home_page.dart';
 import 'create_account.dart';
 import 'forgot_pass.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MaterialApp(
-    home: HomePage(),
-  ));
-}
-
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -43,33 +35,31 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0XFF00463C),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              SizedBox(height: 150.0),
-              Transform(
-                transform: Matrix4.translationValues(1.0, 20.0, 0.0),
-                child: Container(
-                  height: 200.0,
-                  width: 200.0,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/logo1.png'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+              SizedBox(height: 170.0),
+              const Text(
+                'LOGIN YOUR ACCOUNT',
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: 32.0,
+                  fontFamily: 'Helvetica',
                 ),
               ),
-              SizedBox(height: 20.0),
+              SizedBox(height: 90.0),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30.0),
                 child: Column(
                   children: [
                     buildCustomInputField(
-                        'assets/images/mail.png', 'Email', emailFocusNode),
+                      'assets/images/mail.png',
+                      'Email',
+                      emailFocusNode,
+                    ),
                     SizedBox(height: 35.0),
                     buildPasswordInputField(),
                     SizedBox(height: 16.0),
@@ -83,9 +73,9 @@ class _HomePageState extends State<HomePage> {
                         Text(
                           'No account? ',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.black54,
                             fontSize: 16.0,
-                            fontFamily: 'Helvetica'
+                            fontFamily: 'Helvetica',
                           ),
                         ),
                         GestureDetector(
@@ -100,9 +90,9 @@ class _HomePageState extends State<HomePage> {
                           child: Text(
                             'Create one',
                             style: TextStyle(
-                              color: Color(0XFFD4AF37),
+                              color: Colors.black,
                               fontSize: 16.0,
-                              fontFamily: 'Helvetica'
+                              fontFamily: 'Helvetica',
                             ),
                           ),
                         ),
@@ -118,7 +108,7 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(
                     color: Color(0XFF00463C),
                     fontSize: 16.0,
-                    fontFamily: 'Helvetica'
+                    fontFamily: 'Helvetica',
                   ),
                 ),
               SizedBox(height: 20.0),
@@ -140,70 +130,70 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Image.asset(
-                  logoAsset,
-                  height: 40.0,
-                  width: 35.0,
-                ),
-                SizedBox(width: 5.0),
-                SizedBox(width: 10.0),
-                Container(
-                  color: Colors.white,
-                  width: 1.0,
-                  height: 40.0,
-                  margin: EdgeInsets.only(top: 10.0),
-                ),
-                SizedBox(width: 25.0),
-                Expanded(
-                  child: TextFormField(
-                    controller: isPassword ? passwordController : emailController,
-                    focusNode: focusNode,
-                    obscureText: isPassword && !isPasswordVisible,
-                    decoration: InputDecoration(
-                      labelText: label,
-                      labelStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.0,
-                      ),
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.only(bottom: 5.0),
-                      suffixIcon: isPassword
-                          ? IconButton(
-                        icon: Icon(
-                          isPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Color(0XFFD4AF37),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            isPasswordVisible = !isPasswordVisible;
-                          });
-                        },
-                      )
-                          : null,
-                      floatingLabelBehavior: FloatingLabelBehavior.auto,
-                    ),
-                    style: TextStyle(color: Color(0XFFD4AF37)),
-                  ),
-                ),
-              ],
+          Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Image.asset(
+              logoAsset,
+              height: 40.0,
+              width: 35.0,
             ),
-            SizedBox(height: 10.0),
+            SizedBox(width: 5.0),
+            SizedBox(width: 10.0),
             Container(
-              height: 1.0,
-              width: double.infinity,
-              color: Colors.white,
-              margin: EdgeInsets.only(top: 0.0),
+              color: Colors.black,
+              width: 1.0,
+              height: 40.0,
+              margin: EdgeInsets.only(top: 10.0),
+            ),
+            SizedBox(width: 25.0),
+            Expanded(
+              child: TextFormField(
+                controller: isPassword ? passwordController : emailController,
+                focusNode: focusNode,
+                obscureText: isPassword && !isPasswordVisible,
+                decoration: InputDecoration(
+                  labelText: label,
+                  labelStyle: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 18.0,
+                  ),
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.only(bottom: 5.0),
+                  suffixIcon: isPassword
+                      ? IconButton(
+                    icon: Icon(
+                      isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: Colors.black54,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        isPasswordVisible = !isPasswordVisible;
+                      });
+                    },
+                  )
+                      : null,
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                ),
+                style: TextStyle(color: Colors.black),
+              ),
             ),
           ],
         ),
+        SizedBox(height: 10.0),
+        Container(
+            height: 1.0,
+            width: double.infinity,
+            color: Colors.black,
+            margin: EdgeInsets.only(top: 0.0),
       ),
+      ],
+    ),
+    ),
     );
   }
 
@@ -216,8 +206,11 @@ class _HomePageState extends State<HomePage> {
         );
       },
       child: buildCustomInputField(
-          'assets/images/pass.png', 'Password', passwordFocusNode,
-          isPassword: true),
+        'assets/images/pass.png',
+        'Password',
+        passwordFocusNode,
+        isPassword: true,
+      ),
     );
   }
 
@@ -234,10 +227,10 @@ class _HomePageState extends State<HomePage> {
         child: Text(
           'Forgotten your password?',
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black54,
             fontSize: 16.0,
             decoration: TextDecoration.underline,
-            fontFamily: 'Helvetica'
+            fontFamily: 'Helvetica',
           ),
         ),
       ),
@@ -255,22 +248,22 @@ class _HomePageState extends State<HomePage> {
               onPressed: isLoading ? null : signInWithEmailAndPassword,
               style: ElevatedButton.styleFrom(
                 elevation: 0,
-                primary: Color(0XFFD4AF37),
+                primary: Colors.black,
                 onPrimary: Colors.white,
                 padding: EdgeInsets.symmetric(
                   horizontal: 130.0,
                   vertical: 18.0,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
               child: Text(
                 'Log in',
                 style: TextStyle(
                   fontSize: 16.0,
-                  color: Color(0XFF00463C),
-                  fontFamily: 'Helvetica'
+                  color: Colors.white38,
+                  fontFamily: 'Helvetica',
                 ),
               ),
             ),
@@ -281,7 +274,7 @@ class _HomePageState extends State<HomePage> {
           child: Visibility(
             visible: isLoading,
             child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0XFFF06151)),
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.black54),
             ),
           ),
         ),
@@ -317,8 +310,11 @@ class _HomePageState extends State<HomePage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Invalid email or password. Please try again.',style: TextStyle(fontFamily: 'Helvetica'),),
-          backgroundColor: Color(0XFFF06151),
+          content: Text(
+            'Invalid email or password. Please try again.',
+            style: TextStyle(fontFamily: 'Helvetica'),
+          ),
+          backgroundColor: Colors.black54,
         ),
       );
     } finally {
@@ -327,4 +323,12 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MaterialApp(
+    home: HomePage(),
+  ));
 }

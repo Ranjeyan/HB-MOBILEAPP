@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:healingbee/screens/assessments_screen.dart';
@@ -9,7 +8,7 @@ import 'package:healingbee/screens/quick_note_screen.dart';
 class AppEntryPage extends StatefulWidget {
   final User? user;
 
-  AppEntryPage({Key? key, required this.user}) : super(key: key);
+  const AppEntryPage({Key? key, required this.user}) : super(key: key);
 
   @override
   _AppEntryPageState createState() => _AppEntryPageState();
@@ -19,6 +18,8 @@ class _AppEntryPageState extends State<AppEntryPage> {
   int _selectedIndex = 0;
   late String userName = 'User';
   late String email;
+
+
 
   @override
   void initState() {
@@ -69,34 +70,38 @@ class _AppEntryPageState extends State<AppEntryPage> {
       builder: (BuildContext context) {
         return Theme(
           data: ThemeData(
-            // Change the background color of the AlertDialog
-            dialogBackgroundColor: Color(0XFFD4AF37), // Replace 'Colors.blue' with your desired color
+            dialogBackgroundColor: Colors.white,
           ),
           child: AlertDialog(
-            title: Text('Exit App?',style: TextStyle(color: Color(0XFF00463C)),),
-            content: Text('Do you want to exit the app?',style: TextStyle(color: Color(0XFF00463C)),),
+            title: const Text(
+              'Exit App?',
+              style: TextStyle(color: Colors.black,fontFamily: 'Helvetica'),
+            ),
+            content: const Text(
+              'Do you want to exit the app?',
+              style: TextStyle(color: Colors.black,fontFamily: 'Helvetica'),
+            ),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
-                  // User canceled exit
                   Navigator.of(context).pop();
                 },
-                child: Text('Cancel',style: TextStyle(color: Color(0XFF00463C)),),
+                child: const Text('Cancel', style: TextStyle(color:  Colors.black,fontFamily: 'Helvetica'),
+                ),
               ),
               TextButton(
                 onPressed: () {
-                  // User confirmed exit
                   exitConfirmed = true;
                   Navigator.of(context).pop();
                 },
-                child: Text('Exit',style: TextStyle(color: Color(0XFF00463C))),
-              ),
+                child: const Text('Exit', style: TextStyle(color:  Colors.black,fontFamily: 'Helvetica'),
+                ),
+              )
             ],
           ),
         );
       },
     );
-
 
     return exitConfirmed;
   }
@@ -115,7 +120,7 @@ class _AppEntryPageState extends State<AppEntryPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: Color(0XFF00463C),
+        backgroundColor: Colors.white,
         body: Stack(
           children: [
             IndexedStack(
@@ -124,21 +129,38 @@ class _AppEntryPageState extends State<AppEntryPage> {
                 Builder(
                   builder: (context) {
                     if (_selectedIndex == 0) {
-                      // Custom AppBar for Home screen
                       return Column(
                         children: [
-                          SizedBox(height: 20), // Add spacing below the status bar
+                          const SizedBox(height: 2),
                           Padding(
-                            padding: const EdgeInsets.all(2.0),
+                            padding: const EdgeInsets.all(5.0),
                             child: AppBar(
-                              backgroundColor: Color(0XFF00463C), // Replace with your desired color
-                              title: Text(
-                                'Welcome back, $userName!',
-                                style: const TextStyle(fontSize: 28.0, color: Color(0XFFD4AF37),fontFamily: 'Helvetica'),
+                              backgroundColor: Colors.white,
+                              toolbarHeight: 80.0,
+                              title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(top: 1.0),
+                                    child: Text(
+                                      'hello,',
+                                      style: TextStyle(
+                                          fontSize: 24.0, color: Colors.black54,
+                                          fontFamily: 'Helvetica'),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5,),
+                                  Text(
+                                    userName,
+                                    style: const TextStyle(
+                                        fontSize: 28.0, color: Colors.black54,
+                                        fontFamily: 'Helvetica'),
+                                  ),
+                                ],
                               ),
                               actions: [
                                 IconButton(
-                                  icon: Icon(Icons.notifications,color: Color(0XFFD4AF37) ,),
+                                  icon: const Icon(Icons.notifications, color: Colors.black54),
                                   onPressed: () {
                                     // Handle notification button click
                                   },
@@ -150,191 +172,73 @@ class _AppEntryPageState extends State<AppEntryPage> {
                         ],
                       );
                     } else {
-                      // Default AppBar for other screens
                       return AppBar(
                         elevation: 0,
-                        backgroundColor: Color(0XFF00463C), // Customize as needed
-                        title: Text(
-                          'Screen Title', // Customize as needed
+                        backgroundColor: Colors.white,
+                        title: const Text(
+                          'Screen Title',
                           style: TextStyle(fontSize: 16.0, color: Color(0XFFD4AF37)),
                         ),
                       );
                     }
                   },
                 ),
-                AssessmentsScreen(), // Assessments page
-                QuickNotesScreen(), // Quick Notes page
-                ProfileScreen(), // Profile page
+                AssessmentsScreen(),
+                const HomeView(),
+                const AccountScreen(),
               ],
             ),
-          ],
-        ),
-        bottomNavigationBar: BottomNavyBar(
-          backgroundColor: Color(0XFF00463C),
-          selectedIndex: _selectedIndex,
-          onItemSelected: _onItemTapped,
-          items: [
-            BottomNavyBarItem(
-              icon: Padding(
-                padding: const EdgeInsets.only(top: 1),
-                child: Image.asset(
-                  'assets/icons/home.png',
-                  width: 24,
-                  height: 24,
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 15,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Container(
+                  height: 70,
+                  decoration: const BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
+                      bottom: Radius.circular(20),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      buildNavItem(0, Icons.home),
+                      buildNavItem(1, Icons.assessment),
+                      buildNavItem(2, Icons.note),
+                      buildNavItem(3, Icons.person),
+                    ],
+                  ),
                 ),
               ),
-              title: const Padding(
-                padding: EdgeInsets.only(top: 1),
-                child: Text(
-                  'Home',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              activeColor: Color(0XFFD4AF37),
-            ),
-            BottomNavyBarItem(
-              icon: Padding(
-                padding: EdgeInsets.only(top: 3),
-                child: Image.asset(
-                  'assets/icons/assesment.png',
-                  width: 24,
-                  height: 24,
-                ),
-              ),
-              title: const Padding(
-                padding: EdgeInsets.only(top: 4),
-                child: Text(
-                  'Assessment',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              activeColor: const Color(0XFFD4AF37),
-            ),
-            BottomNavyBarItem(
-              icon: Padding(
-                padding: EdgeInsets.only(top: 2),
-                child: Image.asset(
-                  'assets/icons/quick_note.png',
-                  width: 24,
-                  height: 24,
-                ),
-              ),
-              title: Padding(
-                padding: EdgeInsets.only(bottom: 1),
-                child: Text(
-                  'Quick Note',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              activeColor: Color(0XFFD4AF37),
-            ),
-            BottomNavyBarItem(
-              icon: Padding(
-                padding: EdgeInsets.only(top: 1),
-                child: Image.asset(
-                  'assets/icons/profile.png',
-                  width: 24,
-                  height: 24,
-                ),
-              ),
-              title: Padding(
-                padding: EdgeInsets.only(bottom: 1),
-                child: Text(
-                  'Profile',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              activeColor: Color(0XFFD4AF37),
             ),
           ],
         ),
       ),
     );
   }
-}
 
-class FeatureItem extends StatelessWidget {
-  final String iconPath;
-  final String title;
-  final String description;
-
-  FeatureItem({
-    required this.iconPath,
-    required this.title,
-    required this.description,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.asset(
-            iconPath,
-            width: 32,
-            height: 32,
-          ),
-          SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(fontSize: 18.0, color: Colors.white),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  description,
-                  style: TextStyle(fontSize: 16.0, color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-        ],
+  Widget buildNavItem(int index, IconData icon) {
+    return IconButton(
+      icon: Icon(
+        icon,
+        color: _selectedIndex == index ? Colors.white : Colors.white38,
+        size: 30,
       ),
+      onPressed: () {
+        _onItemTapped(index);
+      },
     );
   }
 }
 
-class QuoteSection extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // Implement the daily quote section here
-    return Container(
-      // Add your daily quote content here
-    );
-  }
-}
-
-class CommunityHighlights extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // Implement the community highlights section here
-    return Container(
-      // Add your community highlights content here
-    );
-  }
-}
-
-class TipsForMentalWellness extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // Implement the tips for mental wellness section here
-    return Container(
-      // Add your tips for mental wellness content here
-    );
-  }
-}
-
-class FAQs extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // Implement the FAQs section here
-    return Container(
-      // Add your FAQs content here
-    );
-  }
+void main() {
+  runApp(const MaterialApp(
+    home: Scaffold(
+      body: AppEntryPage(user: null),
+    ),
+  ));
 }

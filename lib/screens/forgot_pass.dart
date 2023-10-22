@@ -13,6 +13,10 @@ class _ResetPasswordState extends State<ForgotPasswordScreen> {
   TextEditingController _emailTextController = TextEditingController();
   bool emailSent = false; // Track if the reset email has been sent
 
+  // Define gradient colors
+  Color gradientStartColor = Colors.black54;
+  Color gradientEndColor = Colors.white38;
+
   // Widget for a Firebase UI button
   Widget firebaseUIButton(BuildContext context, String label, VoidCallback onPressed) {
     return SizedBox(
@@ -38,7 +42,7 @@ class _ResetPasswordState extends State<ForgotPasswordScreen> {
         elevation: 0,
         title: const Text(
           "Forgot Password",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,fontFamily: 'Helvetica'),
         ),
       ),
       body: Container(
@@ -69,8 +73,8 @@ class _ResetPasswordState extends State<ForgotPasswordScreen> {
                     controller: _emailTextController,
                     style: TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                      labelText: "Enter Gmail Id",
-                      labelStyle: TextStyle(color: Colors.white),
+                      labelText: "Enter your email",
+                      labelStyle: TextStyle(color: Colors.white,fontFamily: 'Helvetica'),
                       border: InputBorder.none,
                       prefixIcon: Icon(
                         Icons.person_outline,
@@ -82,7 +86,7 @@ class _ResetPasswordState extends State<ForgotPasswordScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                firebaseUIButton(context, "Reset Password", () {
+                firebaseUIButton(context, "Reset Password",() {
                   FirebaseAuth.instance
                       .sendPasswordResetEmail(email: _emailTextController.text)
                       .then((value) {
@@ -91,8 +95,8 @@ class _ResetPasswordState extends State<ForgotPasswordScreen> {
                     });
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Email has been sent to your mail. Please check your mail.',style: TextStyle(color:Color(0XFF00463C) ),),
-                        backgroundColor:Color(0XFFD4AF37),
+                        content: Text('Email has been sent to your mail. Please check your mail.', style: TextStyle(color: Color(0XFF00463C),fontFamily: 'Helvetica')),
+                        backgroundColor: Colors.black54,
                       ),
                     );
                     Navigator.of(context).pushAndRemoveUntil(
@@ -102,8 +106,8 @@ class _ResetPasswordState extends State<ForgotPasswordScreen> {
                   }).catchError((error) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Failed to reset password. Please try again.'),
-                        backgroundColor: Color(0XFFF06151),
+                        content: Text('Failed to reset password. Please try again.',style: TextStyle(fontFamily: 'Helvetica'),),
+                        backgroundColor: Colors.black54,
                       ),
                     );
                   });
@@ -115,8 +119,4 @@ class _ResetPasswordState extends State<ForgotPasswordScreen> {
       ),
     );
   }
-
-  // Define gradient colors
-  Color gradientStartColor = Color(0xFF00463C);
-  Color gradientEndColor = Color(0xFFD4AF37);
 }

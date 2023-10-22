@@ -1,59 +1,32 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
 import 'package:healingbee/screens/privacy_policy.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../main.dart';
-import 'edit_profile_screen.dart';
+import '../widgets/forward_button.dart';
+import '../widgets/setting_item.dart';
+import 'edit_screen.dart';
+import 'hb_detaills.dart';
 
-class ProfileScreen extends StatefulWidget {
+class AccountScreen extends StatefulWidget {
+  const AccountScreen({Key? key}) : super(key: key);
+
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  State<AccountScreen> createState() => _AccountScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _AccountScreenState extends State<AccountScreen> {
   String selectedLanguage = 'English';
   String userName = '';
   String userEmail = '';
-  String userProfileImage = 'assets/images/profile.png';
-
-  List<String> languages = [
-    'English',
-    'Tamil',
-    'Hindi',
-    'Telugu',
-    'Malayalam',
-    'Kannada',
-    'Urdu',
-    'Marathi',
-    'Gujarati',
-    'Punjabi',
-    'Bengali',
-  ];
-
-  Map<String, String> languageTranslations = {
-    'English': 'English',
-    'Tamil': 'தமிழ்',
-    'Hindi': 'हिन्दी',
-    'Telugu': 'తెలుగు',
-    'Malayalam': 'മലയാളം',
-    'Kannada': 'ಕನ್ನಡ',
-    'Urdu': 'اردو',
-    'Marathi': 'मराठी',
-    'Gujarati': 'ગુજરાતી',
-    'Punjabi': 'ਪੰਜਾਬੀ',
-    'Bengali': 'বাংলা',
-  };
+  String userProfileImage = 'assets/icons/avatar.png';
 
   @override
   void initState() {
     super.initState();
     _fetchUserData();
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent, // Set your desired color here
-    ));
   }
 
   Future<void> _fetchUserData() async {
@@ -73,7 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (userProfileImageUrl != null && userProfileImageUrl.isNotEmpty) {
           userProfileImage = userProfileImageUrl;
         } else {
-          userProfileImage = 'assets/images/profile.png';
+          userProfileImage = 'assets/icons/avatar.png';
         }
 
         prefs.setString('userProfileImage', userProfileImage);
@@ -81,421 +54,222 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Future<void> _updateUserDataInFirestore(String name, String gender, String dob, String image) async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      try {
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
-          'name': name,
-          'gender': gender,
-          'dob': dob,
-          'profileImage': image,
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Profile updated successfully'),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      } catch (e) {
-        print('Error updating user data: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to update profile'),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
-    }
-  }
-
-  void _showLanguageSelectionSheet() {
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30.0),
-          topRight: Radius.circular(30.0),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          onPressed: () {},
+          icon: const Icon(Ionicons.chevron_back_outline, color: Colors.black54),
         ),
+        leadingWidth: 80,
       ),
-      builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: Column(
-            children: [
-              ListTile(
-                leading: IconButton(
-                  icon: Icon(Icons.close),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                title: Text(
-                  'App Language',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w200,
-                    fontSize: 18.0,
-                    color: Color(0XFFD4AF37),
-                    fontFamily: 'Readexpro',
-                  ),
-                ),
-              ),
-              Container(
-                height: MediaQuery.of(context).size.height * 0.5,
-                width: MediaQuery.of(context).size.width * 1,
-                color: Color(0XFF00463C),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: languages.map((language) {
-                      final translation = languageTranslations[language] ?? '';
-
-                      return InkWell(
-                        splashColor: Color(0XFFD4AF37),
-                        onTap: () {
-                          setState(() {
-                            selectedLanguage = language;
-                          });
-                          Navigator.pop(context);
-                        },
-                        child: Column(
-                          children: [
-                            ListTile(
-                              title: Center(
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      language,
-                                      style: TextStyle(
-                                        fontFamily: 'Poppins',
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    if (translation.isNotEmpty)
-                                      Text(
-                                        '($translation)',
-                                        style: TextStyle(
-                                          color: Color(0XFFF06151),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            if (language != languages.last) SizedBox(height: 10),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+      body: _buildAccountScreen(),
     );
   }
 
-  Future<void> _showLogoutConfirmationDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          backgroundColor: Color(0XFFD4AF37), // Custom background color
-          child: Container(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
+  Widget _buildAccountScreen() {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(30),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            double textFontSize = constraints.maxWidth < 600 ? 30 : 36;
+            double titleFontSize = constraints.maxWidth < 600 ? 20 : 24;
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Text(
-                  'Logout Confirmation',
+                  "Settings",
                   style: TextStyle(
-                    color: Colors.white, // Custom text color
-                    fontSize: 18.0,
+                    fontSize: textFontSize,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontFamily: 'Helvetica',
+                  ),
+                ),
+                const SizedBox(height: 40),
+                Text(
+                  "Account",
+                  style: TextStyle(
+                    fontSize: titleFontSize,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
                     fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
                   ),
                 ),
-                SizedBox(height: 10),
-                Text(
-                  'Do you want to logout?',
-                  style: TextStyle(
-                    color: Colors.white, // Custom text color
-                    fontSize: 16.0,
-                    fontFamily: 'lufga',
-                  ),
-                ),
-                SizedBox(height: 20),
+                const SizedBox(height: 50),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center, // Center buttons horizontally
-                  children: <Widget>[
-                    TextButton(
-                      child: Text(
-                        'No',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          color: Colors.white, // Custom text color
-                        ),
+                  children: [
+                    ClipOval(
+                      child: userProfileImage != null && Uri.parse(userProfileImage).isAbsolute
+                          ? Image.network(
+                        userProfileImage,
+                        width: 70,
+                        height: 70,
+                        fit: BoxFit.cover,
+                      )
+                          : Image.asset(
+                        'assets/icons/avatar.png',
+                        width: 70,
+                        height: 70,
+                        fit: BoxFit.cover,
                       ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
                     ),
-                    SizedBox(width: 20),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Color(0XFF00463C), // Custom button background color
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            userName ?? "User Name",
+                            style: TextStyle(
+                              fontSize: titleFontSize,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                              fontFamily: 'Helvetica',
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            userEmail ?? "user@example.com",
+                            style: TextStyle(
+                              fontSize: titleFontSize,
+                              color: Colors.black54,
+                              fontFamily: 'Helvetica',
+                            ),
+                          ),
+                        ],
                       ),
-                      child: Text(
-                        'Yes',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          color: Colors.white, // Custom text color
-                        ),
-                      ),
-                      onPressed: () async {
-                        // Sign out the user from Firebase
-                        try {
-                          await FirebaseAuth.instance.signOut();
-                        } catch (e) {
-                          print('Error signing out: $e');
-                        }
-
-                        SharedPreferences prefs = await SharedPreferences.getInstance();
-                        await prefs.clear();
-                        Navigator.of(context).pop();
-
-                        Navigator.of(context).pushReplacement(
+                    ),
+                    ForwardButton(
+                      onTap: () async {
+                        final updatedImage = await Navigator.push(
+                          context,
                           MaterialPageRoute(
-                            builder: (context) => SplashScreen(args: {
-                              'userName': '',
-                              'email': '',
-                            }, user: null),
+                            builder: (context) => EditAccountScreen(),
                           ),
                         );
+                        if (updatedImage != null) {
+                          setState(() {
+                            userProfileImage = updatedImage; // Update the profile image
+                          });
+                        }
                       },
                     ),
                   ],
                 ),
+                const SizedBox(height: 50),
+                Text(
+                  "Settings",
+                  style: TextStyle(
+                    fontSize: titleFontSize,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Poppins',
+                    color: Colors.black54,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SettingItem(
+                  title: "Language",
+                  icon: Ionicons.earth,
+                  bgColor: Colors.black54,
+                  iconColor: Colors.white,
+                  value: "English",
+                  onTap: () {},
+                ),
+                const SizedBox(height: 20),
+                SettingItem(
+                  title: "Notifications",
+                  icon: Ionicons.notifications,
+                  bgColor: Colors.black54,
+                  iconColor: Colors.white,
+                  onTap: () {},
+                ),
+                const SizedBox(height: 20),
+                // Privacy Policy Option
+                SettingItem(
+                  title: "Privacy Policy",
+                  icon: Ionicons.nuclear,
+                  bgColor: Colors.black54,
+                  iconColor: Colors.white,
+                  onTap: () {
+                    // Navigate to Privacy Policy screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const DetailsScreen(),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 20),
+                // Logout Option
+                SettingItem(
+                  title: "Logout",
+                  icon: Ionicons.log_out,
+                  bgColor:Colors.black54,
+                  iconColor: Colors.white,
+                  onTap: () {
+                    _showLogoutConfirmationDialog();
+                  },
+                ),
               ],
-            ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showLogoutConfirmationDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Logout",style: TextStyle(fontFamily: 'Helvetica'),),
+          // Customize the background color of the dialog
+          backgroundColor: Colors.white, // Change this to your desired color
+
+          // You can wrap the content in a Container to set the text color
+          content: Container(
+            // Customize the text color
+            child: const Text("Are you sure you want to log out?", style: TextStyle(color: Colors.black,fontFamily: 'Helvetica')),
           ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text("Cancel",style: TextStyle(fontFamily: 'Helvetica',color: Colors.black),),
+            ),
+            TextButton(
+              onPressed: () {
+                _logoutUserAndNavigateToDetails();
+              },
+              child: const Text("OK",style: TextStyle(fontFamily: 'Helvetica',color: Colors.black),),
+            ),
+          ],
         );
       },
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0XFF00463C),
-      body: Stack(
-        children: [
-          Positioned(
-            top: -MediaQuery.of(context).size.height / 2.1,
-            left: -(MediaQuery.of(context).size.width * 0.5),
-            right: -(MediaQuery.of(context).size.width * 0.5),
-            child: Container(
-              height: MediaQuery.of(context).size.height / 1.4,
-              width: MediaQuery.of(context).size.width * 1.9,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0XFFD4AF37),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 140,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: 40),
-                  GestureDetector(
-                    onTap: () {
-                      // Handle profile picture tap here
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(bottom: 20),
-                      width: 130,
-                      height: 130,
-                      child: ClipOval(
-                        child: userProfileImage.startsWith('http') // Check if it's a network URL
-                            ? Image.network(
-                          userProfileImage, // Load network image
-                          width: 130,
-                          height: 130,
-                          fit: BoxFit.cover,
-                        )
-                            : Image.asset(
-                          userProfileImage, // Load asset image
-                          width: 130,
-                          height: 130,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Text(
-                    userName,
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontFamily: 'Helvetica',
-                      fontWeight: FontWeight.bold,
-                      color: Color(0XFFD4AF37),
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    userEmail,
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontFamily: 'Helvetica',
-                      color: Colors.grey,
-                    ),
-                  ),
-
-                  SizedBox(height: 40),
-                  ListTile(
-                    leading: Icon(Icons.privacy_tip, color: Color(0XFFF06151)),
-                    title: Text(
-                      'Privacy Policy',
-                      style: TextStyle(
-                        fontFamily: 'Helvetica',
-                        color: Color(0XFFD4AF37),
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetailsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  SizedBox(height: 25),
-                  ListTile(
-                    leading: Icon(Icons.language, color: Color(0XFFF06151)),
-                    title: Text(
-                      'App Language',
-                      style: TextStyle(
-                        fontFamily: 'Helvetica',
-                        color: Color(0XFFD4AF37),
-                      ),
-                    ),
-                    trailing: Text(
-                      selectedLanguage,
-                      style: TextStyle(
-                        color: Color(0XFFF06151),
-                        fontFamily: 'Helvetica',
-                      ),
-                    ),
-                    onTap: () {
-                      _showLanguageSelectionSheet();
-                    },
-                  ),
-                  SizedBox(height: 25),
-                  ListTile(
-                    leading: Icon(Icons.notifications, color: Color(0XFFF06151)),
-                    title: Text(
-                      'Notifications',
-                      style: TextStyle(
-                        fontFamily: 'Helvetica',
-                        color: Color(0XFFD4AF37),
-                      ),
-                    ),
-                    onTap: () {
-                      // Implement your Notifications logic here
-                    },
-                  ),
-                  SizedBox(height: 25),
-                  ListTile(
-                    leading: Icon(Icons.exit_to_app, color: Color(0XFFF06151)),
-                    title: Text(
-                      'Logout',
-                      style: TextStyle(
-                        fontFamily: 'Helvetica',
-                        color: Color(0XFFD4AF37),
-                      ),
-                    ),
-                    onTap: () {
-                      _showLogoutConfirmationDialog();
-                    },
-                  ),
-                  SizedBox(height: 25),
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    width: 160, // Expand the button to the full width
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(10),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EditProfileScreen(
-                              userName: userName,
-                              userDob: '', // You should provide the user's date of birth here
-                              userProfileImage: userProfileImage,
-                              userEmail: userEmail,
-                              userGender: '', // You should provide the user's gender here
-                              onSave: (String name, String gender, String dob, String image) {
-                                _updateUserDataInFirestore(name, gender, dob, image);
-                                setState(() {
-                                  userProfileImage = image; // Update the profile picture URL in this screen
-                                });
-                              },
-                            ),
-                          ),
-                        ).then((value) {
-                          _fetchUserData();
-                        });
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Color(0XFF00463C),
-                          border: Border.all(
-                            color: Color(0XFFD4AF37),
-                            width: 2.0, // Increase the border width for better visibility
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Edit Profile',
-                            style: TextStyle(
-                              fontFamily: 'Helvetica',
-                              color: Color(0XFFD4AF37),
-                              fontSize: 16.0,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+  Future<void> _logoutUserAndNavigateToDetails() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.of(context).pop(); // Close the AccountScreen
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+      builder: (context) => DetailScreen(userName: '', email: '',),
+    ));
   }
 }
 
 void main() {
   runApp(MaterialApp(
-    home: ProfileScreen(),
+    home: AccountScreen(),
   ));
 }

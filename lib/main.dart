@@ -23,7 +23,7 @@ void main() async {
   await Locales.init(
       ['en', 'gu', 'hi', 'kn', 'ml', 'mr', 'pa', 'ta', 'te', 'ur']);
 
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor:Colors.transparent,
     statusBarIconBrightness: Brightness.light,
   ));
@@ -47,9 +47,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       localizationsDelegates: Locales.delegates,
       supportedLocales: Locales.supportedLocales,
-      locale: Locale('en'),
+      locale: const Locale('en'),
       // Set the "home" property to SplashScreen
-      home: SplashScreen(user: user, args: {}),
+      home: SplashScreen(user: user, args: const {}),
       routes: {
         '/appEntry': (context) {
           if (user != null) {
@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
           }
         },
 
-        '/profile': (context) => ProfileScreen(),
+        '/profile': (context) => const AccountScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/home') {
@@ -67,7 +67,7 @@ class MyApp extends StatelessWidget {
           if (args != null && args.containsKey('userName')) {
             final userName = args['userName'] as String;
             return MaterialPageRoute(
-              builder: (context) => AppEntryPage(
+              builder: (context) => const AppEntryPage(
                 user: null,
               ),
             );
@@ -82,7 +82,7 @@ class MyApp extends StatelessWidget {
 class SplashScreen extends StatefulWidget {
   final User? user;
 
-  SplashScreen({Key? key, required this.user, required Map<String, String> args}) : super(key: key);
+  const SplashScreen({Key? key, required this.user, required Map<String, String> args}) : super(key: key);
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -134,26 +134,41 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0XFF00463C),
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-              padding: EdgeInsets.only(right: 20.0),
-              child: Image.asset(
-                'assets/images/logo1.png',
-                height: 200.0,
+            Expanded(
+              flex: 10, // Adjust the flex values as needed
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/logo1.png',
+                    height: 200.0,
+                  ),
+                  const SizedBox(height: 20.0),
+                  const Text(
+                    'Your Text Here', // Replace with your desired text
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 20.0),
-            Transform.scale(
-              scale: 0.3,
-              child: LoadingIndicator(
-                indicatorType: Indicator.ballClipRotateMultiple,
-                colors: const [Color(0XFFFFC986)],
-                strokeWidth: 5,
-                pathBackgroundColor: Colors.black,
+            Expanded(
+              flex: 1, // Adjust the flex values as needed
+              child: Transform.scale(
+                scale: 0.5,
+                child: const LoadingIndicator(
+                  indicatorType: Indicator. ballScaleMultiple,
+                  colors: [Colors.black54],
+                  strokeWidth: 5,
+                  pathBackgroundColor: Colors.black,
+                ),
               ),
             ),
           ],
