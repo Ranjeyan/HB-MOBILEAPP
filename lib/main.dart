@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_locales/flutter_locales.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:healingbee/screens/App_home_page.dart';
 import 'package:healingbee/screens/hb_detaills.dart';
 import 'package:healingbee/screens/profile_screen.dart';
@@ -12,21 +12,38 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
+import 'Assesment/Assesment_detail.dart';
+
+// Initialize the flutterLocalNotificationsPlugin
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
+  // Define notification initialization settings
+  const AndroidInitializationSettings initializationSettingsAndroid =
+  AndroidInitializationSettings('@mipmap/ic_launcher');
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  // Initialize flutterLocalNotificationsPlugin with initialization settings
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+  );
+
   FirebaseAuth auth = FirebaseAuth.instance;
   User? user = auth.currentUser;
 
-  await Locales.init(
-      ['en', 'gu', 'hi', 'kn', 'ml', 'mr', 'pa', 'ta', 'te', 'ur']);
 
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor:Colors.transparent,
-    statusBarIconBrightness: Brightness.light,
-  ));
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+    ),
+  );
 
   runApp(
     ChangeNotifierProvider(
@@ -45,12 +62,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      localizationsDelegates: Locales.delegates,
-      supportedLocales: Locales.supportedLocales,
-      locale: const Locale('en'),
-      // Set the "home" property to SplashScreen
       home: SplashScreen(user: user, args: const {}),
       routes: {
+        '/assessment-detail': (context) => AssessmentDetailPage(),
         '/appEntry': (context) {
           if (user != null) {
             return AppEntryPage(user: user);
@@ -58,7 +72,6 @@ class MyApp extends StatelessWidget {
             return HomePage();
           }
         },
-
         '/profile': (context) => const AccountScreen(),
       },
       onGenerateRoute: (settings) {
@@ -95,22 +108,23 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Future.delayed(Duration(seconds: 2), () {
       if (widget.user != null) {
-        // User is logged in, retrieve their information
         final userName = widget.user?.displayName ?? 'DefaultUsername';
         final email = widget.user?.email ?? '';
 
         if (email.isEmpty) {
-          // User is not logged in, navigate to DetailScreen
           navigateToDetailScreen();
         } else {
-          // User is logged in, navigate to AppEntryPage with actual values
           Navigator.pushReplacementNamed(context, '/appEntry');
         }
       } else {
-        // User is not logged out, navigate to DetailScreen
         navigateToDetailScreen();
       }
     });
+  }
+
+  Future<void> onSelectNotification(String? payload) async {
+    // Handle the notification when the user taps on it.
+    // You can add your custom logic here.
   }
 
   void navigateToDetailScreen() async {
@@ -118,7 +132,6 @@ class _SplashScreenState extends State<SplashScreen> {
     final bool isNewUser = prefs.getBool('isNewUser') ?? true;
 
     if (isNewUser) {
-      // User is a new user, navigate to DetailScreen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -126,7 +139,6 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       );
     } else {
-      // User is an existing user, navigate to AppEntryPage
       Navigator.pushReplacementNamed(context, '/appEntry');
     }
   }
@@ -140,7 +152,7 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
-              flex: 10, // Adjust the flex values as needed
+              flex: 10,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -150,7 +162,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                   const SizedBox(height: 20.0),
                   const Text(
-                    'Your Text Here', // Replace with your desired text
+                    'Your Text Here',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18.0,
@@ -160,11 +172,11 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
             Expanded(
-              flex: 1, // Adjust the flex values as needed
+              flex: 1,
               child: Transform.scale(
                 scale: 0.5,
                 child: const LoadingIndicator(
-                  indicatorType: Indicator. ballScaleMultiple,
+                  indicatorType: Indicator.ballScaleMultiple,
                   colors: [Colors.black54],
                   strokeWidth: 5,
                   pathBackgroundColor: Colors.black,

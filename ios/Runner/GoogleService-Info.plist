@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>960189514323-rubis5eiu2plt5jh6thj3398es79psqs.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.960189514323-rubis5eiu2plt5jh6thj3398es79psqs</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>960189514323-it9hm5h0pv7rlp0eu5fbo14735ilfs24.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBXU-kduxv8seBmLu_NUtDGEUFEDN1KQDQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>960189514323</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.healingbee</string>
+	<key>PROJECT_ID</key>
+	<string>healingbee-firebase</string>
+	<key>STORAGE_BUCKET</key>
+	<string>healingbee-firebase.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:960189514323:ios:f65aba61b28b21f19d7ca6</string>
+	<key>DATABASE_URL</key>
+	<string>https://healingbee-firebase-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              SizedBox(height: 170.0),
+              const SizedBox(height: 170.0),
               const Text(
                 'LOGIN YOUR ACCOUNT',
                 style: TextStyle(
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                   fontFamily: 'Helvetica',
                 ),
               ),
-              SizedBox(height: 90.0),
+              const SizedBox(height: 90.0),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30.0),
                 child: Column(
@@ -60,17 +60,17 @@ class _HomePageState extends State<HomePage> {
                       'Email',
                       emailFocusNode,
                     ),
-                    SizedBox(height: 35.0),
+                    const SizedBox(height: 35.0),
                     buildPasswordInputField(),
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
                     buildForgotPasswordText(),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     buildLoginStack(),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           'No account? ',
                           style: TextStyle(
                             color: Colors.black54,
@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                             );
                           },
-                          child: Text(
+                          child: const Text(
                             'Create one',
                             style: TextStyle(
                               color: Colors.black,
@@ -101,9 +101,9 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               if (resetEmailSent)
-                Text(
+                const Text(
                   'Email has been sent to your mail. Please check your mail.',
                   style: TextStyle(
                     color: Color(0XFF00463C),
@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
                     fontFamily: 'Helvetica',
                   ),
                 ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
             ],
           ),
         ),
@@ -138,15 +138,15 @@ class _HomePageState extends State<HomePage> {
               height: 40.0,
               width: 35.0,
             ),
-            SizedBox(width: 5.0),
-            SizedBox(width: 10.0),
+            const SizedBox(width: 5.0),
+            const SizedBox(width: 10.0),
             Container(
               color: Colors.black,
               width: 1.0,
               height: 40.0,
-              margin: EdgeInsets.only(top: 10.0),
+              margin: const EdgeInsets.only(top: 10.0),
             ),
-            SizedBox(width: 25.0),
+            const SizedBox(width: 25.0),
             Expanded(
               child: TextFormField(
                 controller: isPassword ? passwordController : emailController,
@@ -154,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                 obscureText: isPassword && !isPasswordVisible,
                 decoration: InputDecoration(
                   labelText: label,
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                     color: Colors.black54,
                     fontSize: 18.0,
                   ),
@@ -202,7 +202,7 @@ class _HomePageState extends State<HomePage> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
+          MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
         );
       },
       child: buildCustomInputField(
@@ -219,11 +219,11 @@ class _HomePageState extends State<HomePage> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
+          MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
         );
       },
-      child: Padding(
-        padding: const EdgeInsets.only(top: 20.0),
+      child: const Padding(
+        padding: EdgeInsets.only(top: 20.0),
         child: Text(
           'Forgotten your password?',
           style: TextStyle(
@@ -250,7 +250,7 @@ class _HomePageState extends State<HomePage> {
                 elevation: 0,
                 primary: Colors.black,
                 onPrimary: Colors.white,
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: 130.0,
                   vertical: 18.0,
                 ),
@@ -258,7 +258,7 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'Log in',
                 style: TextStyle(
                   fontSize: 16.0,
@@ -273,7 +273,7 @@ class _HomePageState extends State<HomePage> {
           top: MediaQuery.of(context).size.height / 20,
           child: Visibility(
             visible: isLoading,
-            child: CircularProgressIndicator(
+            child: const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Colors.black54),
             ),
           ),
@@ -309,7 +309,7 @@ class _HomePageState extends State<HomePage> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text(
             'Invalid email or password. Please try again.',
             style: TextStyle(fontFamily: 'Helvetica'),

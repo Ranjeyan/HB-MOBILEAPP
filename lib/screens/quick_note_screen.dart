@@ -21,14 +21,14 @@ class Note {
   });
 }
 
-class HomeView extends StatefulWidget {
-  const HomeView({Key? key});
+class QuickNotes extends StatefulWidget {
+  const QuickNotes({Key? key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  State<QuickNotes> createState() => _QuickNotesState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _QuickNotesState extends State<QuickNotes> {
   bool isListView = true;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -118,7 +118,7 @@ class _HomeViewState extends State<HomeView> {
         ),
       ),
       floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: 100),
+        padding: EdgeInsets.only(bottom: 20),
         child: LayoutBuilder(
           builder: (context, constraints) {
             double buttonWidth = constraints.maxWidth / 3.2;
@@ -128,7 +128,7 @@ class _HomeViewState extends State<HomeView> {
               width: buttonWidth,
               height: buttonHeight,
               decoration: BoxDecoration(
-                color: Colors.black54,
+                color: Colors.black,
                 borderRadius: BorderRadius.circular(buttonHeight / 2),
               ),
               child: TextButton(
@@ -171,7 +171,7 @@ class EmptyView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Lottie.asset('assets/json/empty.json'),
-          Text(
+          const Text(
             'No notes available',
             style: TextStyle(fontSize: 18, color: Colors.black54, fontFamily: 'Helvetica'),
           ),

@@ -1,14 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:lottie/lottie.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+
+import '../notify/notify_bottomsheet.dart';
 
 class CreateNoteView extends StatefulWidget {
   final DocumentSnapshot<Object?>? note;
 
-  CreateNoteView({required this.note, required UniqueKey key}) : super(key: key);
+  const CreateNoteView({required this.note, required UniqueKey key}) : super(key: key);
 
   @override
   _CreateNoteViewState createState() => _CreateNoteViewState();
@@ -24,9 +28,12 @@ class _CreateNoteViewState extends State<CreateNoteView> {
   late AudioPlayer audioPlayer;
   stt.SpeechToText speech = stt.SpeechToText();
 
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
   @override
   void initState() {
     super.initState();
+    initializeNotifications();
     audioPlayer = AudioPlayer();
 
     if (widget.note != null) {
@@ -48,6 +55,12 @@ class _CreateNoteViewState extends State<CreateNoteView> {
     });
   }
 
+  void initializeNotifications() async {
+    final AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+    final InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
   void updateLastChanges(Timestamp? lastMod) {
     if (lastMod != null) {
       final lastModifiedDate = lastMod.toDate();
@@ -64,6 +77,39 @@ class _CreateNoteViewState extends State<CreateNoteView> {
     }
   }
 
+  void _showNotificationOptionsBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return NotificationOptionsBottomSheet(
+          onScheduleNotification: (DateTime selectedDateTime) async { // Pass a DateTime parameter
+            await _scheduleNotification(selectedDateTime);
+            Navigator.pop(context); // Close the bottom sheet
+          },
+        );
+      },
+    );
+  }
+
+
+  Future<void> _scheduleNotification(DateTime selectedDateTime) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    AndroidNotificationDetails(
+      'your_channel_id', 'Your Channel Name',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+    const NotificationDetails platformChannelSpecifics =
+    NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      0, // Unique ID for the notification
+      'healingbee',
+      'hey',
+      platformChannelSpecifics,
+      payload: 'item x',
+    );
+  }
+
   bool isListening = false;
 
   void startListening() {
@@ -71,9 +117,11 @@ class _CreateNoteViewState extends State<CreateNoteView> {
       onResult: (result) {
         setState(() {
           recognizedText = result.recognizedWords;
+          _descriptionController.text = recognizedText;
+          saveNoteToFirestore();
         });
       },
-      listenFor: const Duration(seconds: 30),
+      listenFor: const Duration(seconds: 90),
     );
     setState(() {
       isListening = true;
@@ -92,12 +140,14 @@ class _CreateNoteViewState extends State<CreateNoteView> {
     final title = _titleController.text;
     final description = _descriptionController.text;
     final now = Timestamp.fromDate(DateTime.now());
+    final userId = FirebaseAuth.instance.currentUser?.uid;
 
     final noteData = {
       'title': title,
       'description': description,
       'isPinned': isPinned,
       'lastMod': now,
+      'userId': userId,
     };
 
     if (widget.note != null) {
@@ -106,6 +156,7 @@ class _CreateNoteViewState extends State<CreateNoteView> {
       await _firestore.collection('notes').add(noteData);
     }
   }
+
   @override
   void dispose() {
     super.dispose();
@@ -142,10 +193,12 @@ class _CreateNoteViewState extends State<CreateNoteView> {
             ),
             IconButton(
               icon: const Icon(
-                Icons.notification_add_outlined,
+                Icons.notification_add_rounded,
                 color: Colors.black54,
               ),
-              onPressed: () {},
+              onPressed: () {
+                _showNotificationOptionsBottomSheet();
+              },
             ),
             if (widget.note != null)
               IconButton(
@@ -168,7 +221,7 @@ class _CreateNoteViewState extends State<CreateNoteView> {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Lottie.asset('assets/json/delete_animation.json'),
+                              Lottie.asset('assets/json/delete.json'),
                               const Text(
                                 "This note will be permanently deleted.",
                                 style: TextStyle(fontFamily: 'Helvetica', color: Colors.black54),
@@ -208,89 +261,74 @@ class _CreateNoteViewState extends State<CreateNoteView> {
           ],
         ),
         body: SafeArea(
-          child: Stack(
-            children: <Widget>[
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: TextFormField(
-                      controller: _titleController,
-                      cursorColor: const Color(0XFFCC313D),
-                      decoration: const InputDecoration(
-                        hintText: "Title",
-                        hintStyle: TextStyle(color: Colors.black54),
-                        border: InputBorder.none,
-                      ),
-                      style: const TextStyle(fontFamily: 'Helvetica', fontSize: 30, color: Color(0XFFCC313D)),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: TextFormField(
+                    controller: _titleController,
+                    cursorColor: const Color(0XFFCC313D),
+                    decoration: const InputDecoration(
+                      hintText: "Title",
+                      hintStyle: TextStyle(color: Colors.black54),
+                      border: InputBorder.none,
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: TextFormField(
-                      controller: _descriptionController,
-                      cursorColor: const Color(0XFFCC313D),
-                      onChanged: (text) {
-                        final now = Timestamp.fromDate(DateTime.now());
-                        if (widget.note != null) {
-                          _firestore.collection('notes').doc(widget.note!.id).update({
-                            'lastMod': now,
-                          });
-                          updateLastChanges(now);
-                        }
-                      },
-                      decoration: const InputDecoration(
-                        hintText: "Note",
-                        hintStyle: TextStyle(color: Colors.black54),
-                        border: InputBorder.none,
-                      ),
-                      style: const TextStyle(fontSize: 20, fontFamily: 'Helvetica', color: Colors.black),
-                    ),
-                  ),
-                  if (isListening)
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Text(
-                        recognizedText,
-                        style: const TextStyle(fontSize: 20, fontFamily: 'Helvetica', color: Colors.black),
-                      ),
-                    ),
-                ],
-              ),
-              Positioned(
-                bottom: 16.0,
-                left: 16.0,
-                child: GestureDetector(
-                  onTap: _openOptionsBottomSheet,
-                  child: const Icon(
-                    Icons.add_box_outlined,
-                    color: Colors.black54,
-                    size: 32.0,
+                    style: const TextStyle(fontFamily: 'Helvetica', fontSize: 30, color: Colors.black54),
                   ),
                 ),
-              ),
-              Positioned(
-                bottom: 16.0,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: Text(
-                    lastChanges,
-                    style: const TextStyle(
-                      fontFamily: 'Helvetica',
-                      fontSize: 14,
-                      color: Colors.black54,
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: TextField(
+                    controller: _descriptionController,
+                    cursorColor: Colors.black,
+                    maxLines: null,
+                    onChanged: (text) {
+                      final now = Timestamp.fromDate(DateTime.now());
+                      if (widget.note != null) {
+                        _firestore.collection('notes').doc(widget.note?.id).update({
+                          'lastMod': now,
+                        });
+                        updateLastChanges(now);
+                      }
+                    },
+                    decoration: const InputDecoration(
+                      hintText: "Note",
+                      hintStyle: TextStyle(color: Colors.black54),
+                      border: InputBorder.none,
                     ),
+                    style: const TextStyle(fontSize: 20, fontFamily: 'Helvetica', color: Colors.black),
                   ),
                 ),
+              ],
+            ),
+          ),
+        ),
+        bottomNavigationBar: Container(
+          padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+          color: Colors.white,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: _openOptionsBottomSheet,
+                child: const Icon(
+                  Icons.add_box_outlined,
+                  color: Colors.black54,
+                  size: 32.0,
+                ),
               ),
-              const Positioned(
-                bottom: 16.0,
-                right: 16.0,
-                child: Icon(
-                  Icons.more_vert,
+              Text(
+                lastChanges,
+                style: const TextStyle(
+                  fontFamily: 'Helvetica',
+                  fontSize: 14,
                   color: Colors.black54,
                 ),
+              ),
+              const Icon(
+                Icons.more_vert,
+                color: Colors.black54,
               ),
             ],
           ),

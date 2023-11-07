@@ -23,7 +23,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
   String? newProfileImage;
 
   final ImagePicker _picker = ImagePicker();
-  bool _isUploading = false; // Added for tracking upload state
+  bool _isUploading = false;
 
   @override
   void initState() {
@@ -154,7 +154,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20,),
+                    const SizedBox(height: 20,),
                     _isUploading
                         ? const CircularProgressIndicator() // Show loader while uploading
                         : TextButton(

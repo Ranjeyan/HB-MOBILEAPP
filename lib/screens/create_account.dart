@@ -129,7 +129,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
         child: Column(
           children: [
             SizedBox(height: 10.0),
-            Text(
+            const Text(
               'Create an\nAccount',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -139,7 +139,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 color: Colors.black,
               ),
             ),
-            SizedBox(height: 60.0),
+            const SizedBox(height: 60.0),
             InputField(label: 'Enter your full name', labelColor: Colors.black54, controller: nameController),
             SizedBox(height: 30.0),
             InputField(label: 'Enter your email', labelColor: Colors.black54, controller: emailController),
@@ -152,7 +152,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 elevation: 0,
                 backgroundColor: Colors.black,
                 foregroundColor: Colors.white38,
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: 110.0,
                   vertical: 16.0,
                 ),
@@ -160,7 +160,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'Sign Up',
                 style: TextStyle(
                   fontSize: 16.0,
@@ -211,7 +211,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   children: [
                     GestureDetector(
                       onTap: _onPrivacyPolicyTapped,
-                      child: Text(
+                      child: const Text(
                         'privacy policy',
                         style: TextStyle(
                           color: Colors.black,
@@ -224,7 +224,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     Text(' & '),
                     GestureDetector(
                       onTap: _onFAQTapped,
-                      child: Text(
+                      child: const Text(
                         "faq's",
                         style: TextStyle(
                           color: Colors.black, // Customize the link color

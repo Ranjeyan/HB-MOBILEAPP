@@ -1,3 +1,3 @@
 class AppStrings{
-  static const appName = "NoteBucket";
+  static const appName = "healingbee";
 }

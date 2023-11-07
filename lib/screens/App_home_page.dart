@@ -1,9 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:healingbee/screens/assessments_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:healingbee/screens/profile_screen.dart';
 import 'package:healingbee/screens/quick_note_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../apphome/view.dart';
+import 'assessments_screen.dart';
 
 class AppEntryPage extends StatefulWidget {
   final User? user;
@@ -18,8 +22,7 @@ class _AppEntryPageState extends State<AppEntryPage> {
   int _selectedIndex = 0;
   late String userName = 'User';
   late String email;
-
-
+  int _selectedEmotion = -1; // Initialize with -1, indicating no selection
 
   @override
   void initState() {
@@ -62,6 +65,23 @@ class _AppEntryPageState extends State<AppEntryPage> {
     return null;
   }
 
+  Future<bool> hasUserSubmittedToday() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final lastSubmissionDate = prefs.getString('lastSubmissionDate');
+
+    // If the user has never submitted, or it's a different day, allow submission
+    if (lastSubmissionDate == null || lastSubmissionDate != _getCurrentDate()) {
+      return false;
+    } else {
+      return true; // User has already submitted today
+    }
+  }
+
+  String _getCurrentDate() {
+    final now = DateTime.now();
+    return '${now.year}-${now.month}-${now.day}';
+  }
+
   Future<bool> _showExitConfirmationDialog(BuildContext context) async {
     bool exitConfirmed = false;
 
@@ -75,27 +95,27 @@ class _AppEntryPageState extends State<AppEntryPage> {
           child: AlertDialog(
             title: const Text(
               'Exit App?',
-              style: TextStyle(color: Colors.black,fontFamily: 'Helvetica'),
+              style: TextStyle(color: Colors.black, fontFamily: 'Helvetica'),
             ),
             content: const Text(
               'Do you want to exit the app?',
-              style: TextStyle(color: Colors.black,fontFamily: 'Helvetica'),
+              style: TextStyle(color: Colors.black, fontFamily: 'Helvetica'),
             ),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text('Cancel', style: TextStyle(color:  Colors.black,fontFamily: 'Helvetica'),
-                ),
+                child: const Text('Cancel',
+                    style: TextStyle(color: Colors.black, fontFamily: 'Helvetica')),
               ),
               TextButton(
                 onPressed: () {
                   exitConfirmed = true;
                   Navigator.of(context).pop();
                 },
-                child: const Text('Exit', style: TextStyle(color:  Colors.black,fontFamily: 'Helvetica'),
-                ),
+                child: const Text('Exit',
+                    style: TextStyle(color: Colors.black, fontFamily: 'Helvetica')),
               )
             ],
           ),
@@ -120,102 +140,41 @@ class _AppEntryPageState extends State<AppEntryPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Stack(
+        body: IndexedStack(
+          index: _selectedIndex,
           children: [
-            IndexedStack(
-              index: _selectedIndex,
-              children: [
-                Builder(
-                  builder: (context) {
-                    if (_selectedIndex == 0) {
-                      return Column(
-                        children: [
-                          const SizedBox(height: 2),
-                          Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: AppBar(
-                              backgroundColor: Colors.white,
-                              toolbarHeight: 80.0,
-                              title: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.only(top: 1.0),
-                                    child: Text(
-                                      'hello,',
-                                      style: TextStyle(
-                                          fontSize: 24.0, color: Colors.black54,
-                                          fontFamily: 'Helvetica'),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 5,),
-                                  Text(
-                                    userName,
-                                    style: const TextStyle(
-                                        fontSize: 28.0, color: Colors.black54,
-                                        fontFamily: 'Helvetica'),
-                                  ),
-                                ],
-                              ),
-                              actions: [
-                                IconButton(
-                                  icon: const Icon(Icons.notifications, color: Colors.black54),
-                                  onPressed: () {
-                                    // Handle notification button click
-                                  },
-                                ),
-                              ],
-                              elevation: 0,
-                            ),
-                          ),
-                        ],
-                      );
-                    } else {
-                      return AppBar(
-                        elevation: 0,
-                        backgroundColor: Colors.white,
-                        title: const Text(
-                          'Screen Title',
-                          style: TextStyle(fontSize: 16.0, color: Color(0XFFD4AF37)),
-                        ),
-                      );
-                    }
-                  },
-                ),
-                AssessmentsScreen(),
-                const HomeView(),
-                const AccountScreen(),
-              ],
+            HomeView(
+              userName: userName,
+              selectedEmotion: _selectedEmotion,
+              onAssessmentPressed: handleFeelingSubmission, // Pass the function here
             ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 15,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Container(
-                  height: 70,
-                  decoration: const BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(20),
-                      bottom: Radius.circular(20),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      buildNavItem(0, Icons.home),
-                      buildNavItem(1, Icons.assessment),
-                      buildNavItem(2, Icons.note),
-                      buildNavItem(3, Icons.person),
-                    ],
-                  ),
-                ),
+            AssessmentsScreen(),
+            const QuickNotes(),
+            const AccountScreen()
+          ],
+        ),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Container(
+            margin: const EdgeInsets.only(top: 10, bottom: 10),
+            height: 70,
+            decoration: const BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(20),
+                bottom: Radius.circular(20),
               ),
             ),
-          ],
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                buildNavItem(0, Icons.home),
+                buildNavItem(1, Icons.assessment),
+                buildNavItem(2, Icons.note),
+                buildNavItem(3, Icons.person),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -233,12 +192,37 @@ class _AppEntryPageState extends State<AppEntryPage> {
       },
     );
   }
+
+  // Function to handle feeling submission
+  void handleFeelingSubmission() async {
+    bool hasSubmittedToday = await hasUserSubmittedToday();
+    if (!hasSubmittedToday) {
+      // Allow the user to submit their feeling
+      // ... your submission logic here ...
+
+      // Update the last submission date in shared preferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('lastSubmissionDate', _getCurrentDate());
+    } else {
+      // The user has already submitted today, show a message or take appropriate action
+      // ... your action here ...
+    }
+  }
 }
 
 void main() {
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
+
   runApp(const MaterialApp(
     home: Scaffold(
       body: AppEntryPage(user: null),
     ),
   ));
 }
+
+
